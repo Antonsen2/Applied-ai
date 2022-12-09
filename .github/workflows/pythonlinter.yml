@@ -1,6 +1,9 @@
 name: Python package
 
-on: [push]
+on:
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -8,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.7"]
 
     steps:
       - uses: actions/checkout@v3
@@ -23,8 +26,8 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with Pep8
         run: |
-          # stop the build if there are Python syntax errors or undefined names. The max line length 127.
-          pycodestyle src/. --count --select=E9,F63,F7,F82 --show-source --max-line-length=127 --statistics
+          # stop the build if there are Python syntax errors or undefined names. The is 127 chars wide
+          pycodestyle api/. --count --show-source --max-line-length=127 --statistics
       - name: Test with pylint
         run: |
-          pylint src/. --errors-only
+          pylint api/. --rcfile=.github/workflows/vanilla.rc
