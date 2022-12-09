@@ -1,13 +1,15 @@
-name: Python package
+name: Python Linter
 
 on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
 
 jobs:
-  build-python:
-
+  Pep8:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -22,12 +24,29 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pycodestyle pylint
+          pip install pycodestyle
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Lint with Pep8
         run: |
           # stop the build if there are Python syntax errors or undefined names. The is 127 chars wide
           pycodestyle api/. --count --show-source --max-line-length=127 --statistics
-      - name: Lint with Pylint
+  Pylint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.7"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pylint
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Test with pylint
         run: |
           pylint api/. --rcfile=.github/workflows/pylint.rc
