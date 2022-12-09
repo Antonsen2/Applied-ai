@@ -11,6 +11,7 @@ on:
 jobs:
   Pep8:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         python-version: ["3.7"]
@@ -30,8 +31,10 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names. The is 127 chars wide
           pycodestyle api/. --count --show-source --max-line-length=127 --statistics
+
   Pylint:
     runs-on: ubuntu-latest
+
     strategy:
       matrix:
         python-version: ["3.7"]
