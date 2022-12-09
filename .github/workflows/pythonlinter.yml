@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-python:
 
     runs-on: ubuntu-latest
     strategy:
@@ -28,6 +28,6 @@ jobs:
         run: |
           # stop the build if there are Python syntax errors or undefined names. The is 127 chars wide
           pycodestyle api/. --count --show-source --max-line-length=127 --statistics
-      - name: Test with pylint
+      - name: Lint with Pylint
         run: |
           pylint api/. --rcfile=.github/workflows/pylint.rc
