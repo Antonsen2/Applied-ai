@@ -30,4 +30,4 @@ jobs:
           pycodestyle api/. --count --show-source --max-line-length=127 --statistics
       - name: Test with pylint
         run: |
-          pylint api/. --rcfile=.github/workflows/vanilla.rc
+          pylint api/. --rcfile=.github/workflows/pylint.rc
