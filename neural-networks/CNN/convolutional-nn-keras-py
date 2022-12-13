@@ -1,56 +1,69 @@
-#from keras.models import Sequential
-#from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-# from keras.model_selection import train_test_split
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+import keras
+import tensorflow as tf
+from sklearn.model_selection import train_test_split
 import os
 import cv2
 import numpy as np
-import tensorflow as tf
-import sys
-
-print(sys.path)
 
 
-# def load_images_from_folder(folder):
-#     images = []pip
-#     for filename in os.listdir(folder):
-#         img = cv2.imread(os.path.join(folder,filename))
-#         if img is not None:
-#             images.append(img)
-#         return images
-
-# def cnn():
-#     fire_images = load_images_from_folder("c:/code/applied-ai/data/root/datasets/50-50/fire")
-#     forest_images = load_images_from_folder("c:/code/applied-ai/data/root/datasets/50-50/no-fire")
-
-#     fire_np = np.array(fire_images)
-#     forest_np = np.array(forest_images)
-
-#     x_train, x_test = train_test_split(fire_images, test_size=0.2, random_state=42)
-#     y_train, y_test = train_test_split(forest_images, test_size=0.2, random_state=42)
+def load_images_from_folder(folder):
+    images = []
+    for filename in os.listdir(folder):
+        img = cv2.imread(os.path.join(folder,filename))
+        if img is not None:
+            images.append(img)
+    return images
 
 
-#     # Create the model
-#     model = Sequential()
 
-#     # Add convolutional layers
-#     model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
-#     model.add(Conv2D(64, (3, 3), activation='relu'))
-#     model.add(MaxPooling2D(pool_size=(2, 2)))
+def cnn():
 
-#     # Add a flattening layer
-#     model.add(Flatten())
 
-#     # Add dense layers
-#     model.add(Dense(128, activation='relu'))
-#     model.add(Dense(10, activation='softmax'))
 
-#     # Compile the model
-#     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    fire_images = load_images_from_folder("c:/code/applied-ai/data/root/datasets/50-50/fire")
+    forest_images = load_images_from_folder("c:/code/applied-ai/data/root/datasets/50-50/no-fire")
 
-#     # Train the model
-#     model.fit(x_train, y_train, batch_size=32, epochs=10, validation_data=(x_val, y_val))
+    images = fire_images + forest_images
+    
+    #forest_np = np.array(forest_images)
 
-#     # Evaluate the model
-#     model.evaluate(x_test, y_test)
+    x_list = np.array(images)
+    y_list = [0] * 500
+    forest = [1] * 500
+    y_list.extend(forest)
+    y_list = np.array(y_list)
+    #print(len(y_list))
+    #print(len(x_list))
 
-# cnn()
+
+    x_train, x_test, y_train, y_test = train_test_split(x_list, y_list, random_state=104, test_size=0.25, shuffle=True)
+
+    x_train, x_val, y_train, y_val= train_test_split(x_train, y_train, random_state=104, test_size=0.1, shuffle=True)
+
+    # Create the model
+    model = Sequential()
+
+    # Add convolutional layers
+    model.add(Conv2D(64, (3, 3), activation='relu', input_shape=(250, 250, 3)))
+    model.add(Conv2D(128, (3, 3), activation='relu'))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+
+    # Add a flattening layer
+    model.add(Flatten())
+
+    # Add dense layers
+    model.add(Dense(128, activation='relu'))
+    model.add(Dense(1, activation='softmax'))
+
+    # Compile the model
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    # Train the model
+    model.fit(x_train, y_train, batch_size=25, epochs=5, validation_data=(x_val, y_val))
+
+    # Evaluate the model
+    model.evaluate(x_test, y_test)
+
+cnn()
