@@ -1,3 +1,4 @@
 data
 
 venv*
+autogluon-image-prediction/tmp

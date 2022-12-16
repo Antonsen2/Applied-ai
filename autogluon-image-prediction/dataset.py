@@ -10,6 +10,7 @@ def generate_csv(target_csv_file, src_image_dir, label_mappings):
             lines.append(f"{file_name},{label}")
 
     with open(target_csv_file, "w") as f:
+        f.write(f"image,label\n")
         f.write("\n".join(lines))
 
 def generate_zip(target_file, src_dir):
