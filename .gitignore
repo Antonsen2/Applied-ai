@@ -1,3 +1,4 @@
 /data
 wildfire-data/
-venv/
+data
+venv*
