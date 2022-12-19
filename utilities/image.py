@@ -1,5 +1,6 @@
 import os
 import shutil
+import numpy as np
 
 from PIL import Image
 
@@ -63,3 +64,27 @@ def bulk_move_images(old_dir: str, new_dir: str) -> None:
                 dst=new_dir + img,
                 copy_function=shutil.copy2
             )
+
+
+def load_images(dir: str) -> list[np.array]:
+    """
+    Load all images from directory.
+    params:
+        dir: str, directory for the images
+    return:
+        list[np.array], list of all iamges converted to numpy arrays
+    """
+    images = list()
+
+    for file in os.listdir(dir):
+        file = os.path.join(dir, file)
+
+        if not os.path.isfile(file):  # Ignore directories etc.
+            continue
+
+        img = Image.open(file)
+        if img is not None:
+            img = np.asarray(img)
+            images.append(img)
+    
+    return images
