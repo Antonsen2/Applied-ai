@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 import os
 import cv2
 import numpy as np
-
+import pickle
 
 def load_images_from_folder(folder):
     images = []
@@ -65,5 +65,9 @@ def cnn():
 
     # Evaluate the model
     model.evaluate(x_test, y_test)
+
+    filename = 'CNN50accuracy.sav'
+    pickle.dump(model, open(filename, 'wb'))
+
 
 cnn()
