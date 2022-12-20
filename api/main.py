@@ -44,11 +44,10 @@ def upload_button():
 
 @app.post("/classify-image")
 def classify_image(image: bytes = File(...)):
-    # Preprocess the image
+    # Loads the image uploaded and resizes it
     image = cv2.imdecode(np.frombuffer(image, np.uint8), cv2.IMREAD_UNCHANGED)
     image = cv2.resize(image, (250, 250))
     image = [image]
     image = np.array(image)
-    print(image.shape)
     result = wildfire_control.run_model(image)
     return f"{result}"
