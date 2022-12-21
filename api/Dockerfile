@@ -1,4 +1,4 @@
-FROM python:3.9.16-alpine3.17 as builder
+FROM python:3.9-slim AS builder
 
 WORKDIR /api
 
@@ -12,16 +12,17 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-
-FROM python:3.9.16-alpine3.17
+FROM python:3.9-slim
 
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
-RUN addgroup -S api && adduser -S wildfire -G api
+RUN groupadd api && \
+    useradd wildfire -G api --create-home
+
 USER wildfire
 
 WORKDIR /home/wildfire/api
 COPY --chown=wildfire:api . .
 
-CMD ["python", "main.py"]
+CMD ["uvicorn", "main:app"]
