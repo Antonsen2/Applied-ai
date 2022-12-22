@@ -14,10 +14,6 @@ RUN pip install --upgrade pip && \
 
 FROM python:3.9-slim
 
-RUN apt update && \
-    apt install -y curl libglib2.0-0 libgl1-mesa-glx && \
-    rm -rf /var/lib/apt/lists/*
-
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
