@@ -5,6 +5,8 @@ import wildfire_control
 from PIL import Image
 import numpy as np
 import cv2
+from keras_preprocessing.image import img_to_array, ImageDataGenerator
+from keras.applications.vgg16 import preprocess_input
 
 """
 Using uvicorn to run API.
@@ -46,8 +48,10 @@ def upload_button():
 def classify_image(image: bytes = File(...)):
     # Loads the image uploaded and resizes it
     image = cv2.imdecode(np.frombuffer(image, np.uint8), cv2.IMREAD_UNCHANGED)
-    image = cv2.resize(image, (250, 250))
-    image = [image]
-    image = np.array(image)
+    image = cv2.resize(image, (224, 224))
+    image = img_to_array(image)
+    image =  image.reshape((1,  image.shape[0],    image.shape[1],  image.shape[2]))
+    image = preprocess_input(image)
     result = wildfire_control.run_model(image)
+    print(result)
     return f"{result}"
