@@ -1,2 +1,5 @@
 /data
 .venv
+wildfire-data/
+data
+venv*
