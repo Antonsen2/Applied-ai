@@ -1,3 +1,5 @@
+"""This module contains helper functions for image processing"""
+
 import os
 import shutil
 import numpy as np
@@ -31,7 +33,7 @@ def bulk_resize_images(data_dir: str, image_category: str,
         data_dir: str, data root directory
         image_category: str, category for the image, ex. 'fire' for fire images
         new_size: tuple[int, int], pixelsize (x, y)
-        new_dir: str, new image directory. Default None
+        new_dir: str, new image directory. Default None (uses data_dir as output)
     return:
         None
     """

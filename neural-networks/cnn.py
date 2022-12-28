@@ -1,157 +1,153 @@
-import numpy as np
-import keras
+import os.path
+import pandas as pd
+import tensorflow as tf
+import utilities.settings as settings
 
-from keras.models import Sequential
-from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Dense, Activation, Flatten, Dropout, BatchNormalization
-from keras.layers import Conv2D, MaxPooling2D
-from keras import regularizers
-from keras.callbacks import LearningRateScheduler
+from keras.layers import Dense, Dropout
+from keras_preprocessing.image import ImageDataGenerator
+from tensorflow.keras import layers, Model
+from tensorflow.keras.applications import MobileNetV2
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.optimizers import Adam
+from tensorflow import keras
+
 from sklearn.model_selection import train_test_split
+from utilities.data import split_df, create_callback
 
-from utilities.nn import one_hot_encode
+RESIZE_AND_RESCALE = tf.keras.Sequential([
+  layers.experimental.preprocessing.Resizing(*settings.IMG_SIZE),
+  layers.experimental.preprocessing.Rescaling(1./255),
+])
 
+TRAIN_GENERATOR = ImageDataGenerator(
+    preprocessing_function=tf.keras.applications.mobilenet_v2.preprocess_input,
+    validation_split=0.2
+)
+TEST_GENERATOR = ImageDataGenerator(
+    preprocessing_function=tf.keras.applications.mobilenet_v2.preprocess_input
+)
 
-class CNN:
-    """Initial Convolutional Neural Network from Keras"""
-    def __init__(self, X: np.ndarray, y: np.ndarray) -> None:
-        self.X = X
-        self.y = y
+class ImageGenerator:
+    def __init__(self, split: bool = False, cols: list = None, **kwargs) -> None:
+        dataframe = self.set_up_df()
+        if split:
+            dataframe = split_df(dataframe, cols, **kwargs)
 
-        self.weight_decay = 1e-4
-        self.num_classes = 10
+        train_df, test_df = train_test_split(
+            dataframe, test_size=0.3, shuffle=True, random_state=42
+        )
 
-        self.model = self.model_set_up()
-        self.model.summary()
+        self.train_images = TRAIN_GENERATOR.flow_from_dataframe(
+            dataframe=train_df,
+            x_col=cols[0] if cols else 'Filepath',
+            y_col=cols[1] if cols else 'Label',
+            target_size=settings.IMG_SIZE,
+            color_mode=settings.COLOR_MODE,
+            class_mode=settings.CLASS_MODE,
+            batch_size=settings.BATCH_SIZE,
+            shuffle=True,
+            seed=settings.RANDOM_SEED,
+            subset='training'
+        )
+        self.validation_images = TRAIN_GENERATOR.flow_from_dataframe(
+            dataframe=train_df,
+            x_col=cols[0] if cols else 'Filepath',
+            y_col=cols[1] if cols else 'Label',
+            target_size=settings.IMG_SIZE,
+            color_mode=settings.COLOR_MODE,
+            class_mode=settings.CLASS_MODE,
+            batch_size=settings.BATCH_SIZE,
+            shuffle=True,
+            seed=settings.RANDOM_SEED,
+            subset='validation'
+        )
+        self.test_images = TEST_GENERATOR.flow_from_dataframe(
+            dataframe=test_df,
+            x_col=cols[0] if cols else 'Filepath',
+            y_col=cols[1] if cols else 'Label',
+            target_size=settings.IMG_SIZE,
+            color_mode=settings.COLOR_MODE,
+            class_mode=settings.CLASS_MODE,
+            batch_size=settings.BATCH_SIZE,
+            shuffle=False
+        )
 
     @staticmethod
-    def lr_schedule(epoch: int) -> float:
-        """Method to schedule the learning rate"""
-        if epoch > 75:
-            return 0.0005
-        elif epoch > 100:
-            return 0.0003
-        return 0.001
+    def set_up_df() -> pd.DataFrame:
+        """Get all image path from IMG_DIR and label them from their directory name
+        return:
+            Pandas Dataframe, dataframe with filepaths and labels mapped
+        """
+        filepaths = list(settings.IMG_DIR.glob(r'**/*.JPG')) + list(settings.IMG_DIR.glob(r'**/*.jpg')) + list(settings.IMG_DIR.glob(r'**/*.png'))
+        labels = list(map(lambda x: os.path.split(os.path.split(x)[0])[1], filepaths))
 
-    def model_set_up(self) -> keras.Sequential:
-        """Set up the model layers"""
-        model = Sequential()
+        filepaths = pd.Series(filepaths, name='Filepath').astype(str)
+        labels = pd.Series(labels, name='Label')
 
-        model.add(Conv2D(
-            32,
-            (3,3),
-            padding='same',
-            kernel_regularizer=regularizers.l2(self.weight_decay),
-            input_shape=self.X.shape[1:]
-        ))
-        model.add(Activation('elu'))
-        model.add(BatchNormalization())
-        model.add(Conv2D(
-            32,
-            (3,3),
-            padding='same',
-            kernel_regularizer=regularizers.l2(self.weight_decay)
-        ))
-        model.add(Activation('elu'))
-        model.add(BatchNormalization())
-        model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.2))
+        df = pd.concat([filepaths, labels], axis=1)
+        return df
 
-        model.add(Conv2D(
-            64,
-            (3,3),
-            padding='same',
-            kernel_regularizer=regularizers.l2(self.weight_decay)
-        ))
-        model.add(Activation('elu'))
-        model.add(BatchNormalization())
-        model.add(Conv2D(
-            64,
-            (3,3),
-            padding='same',
-            kernel_regularizer=regularizers.l2(self.weight_decay)
-        ))
-        model.add(Activation('elu'))
-        model.add(BatchNormalization())
-        model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.3))
+class CNN:
+    def __init__(self, split: bool = False, cols: list = None, **kwargs) -> None:
+        self.history = None
+        
+        self.images = ImageGenerator(split, cols, **kwargs)
+        self.X, self.inputs = self.setup()
+        self.outputs = Dense(2, activation='softmax')(self.X)
 
-        model.add(Conv2D(
-            128,
-            (3,3), 
-            padding='same',
-            kernel_regularizer=regularizers.l2(self.weight_decay)
-        ))
-        model.add(Activation('elu'))
-        model.add(BatchNormalization())
-        model.add(Conv2D(
-            128,
-            (3,3),
-            padding='same',
-            kernel_regularizer=regularizers.l2(self.weight_decay)
-        ))
-        model.add(Activation('elu'))
-        model.add(BatchNormalization())
-        model.add(MaxPooling2D(pool_size=(2,2)))
-        model.add(Dropout(0.4))
+        self.model = Model(inputs=self.inputs, outputs=self.outputs)
 
-        model.add(Flatten())
-        model.add(Dense(self.num_classes, activation='softmax'))
-
-        return model
-
-    def train(self) -> None:
-        """Main method. Training phase"""
-        X_train, X_test, y_train, y_test = train_test_split(
-            self.X, self.y, random_state=104, test_size=0.4, shuffle=True
+    @staticmethod
+    def setup() -> tuple:
+        """Process X for model training based on pre-trained MobileNetV2 model
+        return:
+            tuple, X and inputs from pre-trained model
+        """
+        pretrained_model = MobileNetV2(
+            input_shape=(250, 250, 3),
+            include_top=False,
+            weights='imagenet',
+            pooling='avg'
         )
-        X_train, X_val, y_train, y_val = train_test_split(
-            X_train, y_train, random_state=104, test_size=0.2, shuffle=True
+        pretrained_model.trainable = False
+
+        X = RESIZE_AND_RESCALE(pretrained_model.input)
+        X = Dense(256, activation='relu')(pretrained_model.output)
+        X = Dropout(0.2)(X)
+        X = Dense(256, activation='relu')(X)
+        X = Dropout(0.2)(X)
+
+        return X, pretrained_model.input
+
+    def train(self, _dir: str, log_dir: str) -> None:
+        """Model train method"""
+        checkpoint_callback = ModelCheckpoint(
+            settings.CHECKPOINT_PATH,
+            save_weights_only=True,
+            monitor='val_accuracy',
+            save_best_only=True
         )
-
-        X_train = X_train.astype('float32')
-        X_test = X_test.astype('float32')
-
-        mean = np.mean(X_train,axis=(0, 1, 2, 3))
-        std = np.std(X_train,axis=(0, 1, 2, 3))
-        X_train = (X_train-mean) / (std+1e-7)
-        X_test = (X_test-mean) / (std+1e-7)
-
-        y_train = one_hot_encode(y_train)
-        y_test = one_hot_encode(y_test)
-
-        datagen = ImageDataGenerator(
-            rotation_range=15,
-            width_shift_range=0.1,
-            height_shift_range=0.1,
-            horizontal_flip=True,
+        early_stopping = EarlyStopping(
+            monitor = "val_loss",
+            patience = 5,
+            restore_best_weights = True
         )
-        datagen.fit(X_train)
-
-        batch_size = 64
-        opt_rms = keras.optimizers.RMSprop(lr=0.001,decay=1e-6)
 
         self.model.compile(
+            optimizer=Adam(0.0001),
             loss='categorical_crossentropy',
-            optimizer=opt_rms,
-            metrics=['accuracy'])
-        self.model.fit_generator(
-            datagen.flow(
-                X_train,
-                y_train,
-                batch_size=batch_size
-            ),
-            steps_per_epoch=X_train.shape[0] // batch_size,
-            epochs=125,
-            verbose=1,
-            validation_data=(X_val,y_val),
-            callbacks=[LearningRateScheduler(self.lr_schedule)]
+            metrics=['accuracy']
         )
 
-    # TODO: Change save functionality from JSON to binary
-    def save(self, model_name: str) -> None:
-        """Save model to JSON and save the model weights"""
-        model_json = self.model.to_json()
-        with open(f'{model_name}.json', 'w', encoding='utf-8') as json_file:
-            json_file.write(model_json)
-        self.model.save_weights('model.h5')
+        self.history = self.model.fit(
+            self.images.train_images,
+            steps_per_epoch=len(self.images.train_images),
+            validation_data=self.images.validation_images,
+            validation_steps=len(self.images.validation_images),
+            epochs=100,
+            callbacks=[
+                early_stopping,
+                create_callback(_dir, log_dir),
+                checkpoint_callback,
+            ]
+        )
