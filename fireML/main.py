@@ -67,7 +67,7 @@ def test(model, X, y):
 def main():
     model = load_model()
     X, y = dataset(5)
-    test(model, X, y)
+    #test(model, X, y)
 
 
 if __name__ == '__main__':
