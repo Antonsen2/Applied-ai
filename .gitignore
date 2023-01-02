@@ -1,8 +1,8 @@
 __pycache__
 notebooks
 /data
+.venv
 wildfire-data/
 data
-
 venv*
 autogluon-image-prediction/tmp
