@@ -3,4 +3,6 @@ notebooks
 /data
 wildfire-data/
 data
+
 venv*
+autogluon-image-prediction/tmp
