@@ -16,7 +16,7 @@ and then in the console type uvicorn main:app to see api.
 
 app = FastAPI()
 
-@app.get('/classify-image')
+@app.get('/')
 def upload_button():
 
     html =  """
@@ -31,7 +31,7 @@ def upload_button():
 
     return HTMLResponse(html)
 
-@app.post("/classify-image")
+@app.post("/")
 def classify_image(image: bytes = File(...)):
     # Loads the image uploaded and resizes it
     image = Image.open(io.BytesIO(image))
