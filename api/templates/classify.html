@@ -1,0 +1,54 @@
+<style>
+      
+    .fiery-text {
+      color: #ff6600; /* Fiery orange color */
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center; /* Center the text */
+      margin-bottom: 20px;
+      
+    }
+  
+    .fiery-button {
+      background-color: #ff6600; /* Fiery orange color */
+      width: 95px;
+      height: 40px;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      border-radius: 3px;
+      box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
+      margin: 0 auto; /* Center the button */
+      
+
+    }
+  
+    .fiery-button:hover {
+      background-color: #ff9933; /* Fiery orange color on hover */
+    }
+
+    
+    body {
+    background: black
+
+    }
+  </style>
+  <body>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <div class="fiery-text">
+    Choose the image you want the model to predict on
+  </div>
+  
+  <form id="upload-form" method="post" enctype="multipart/form-data">
+    <label for="file-upload" class="fiery-button">
+      <i class="fa fa-cloud-upload"></i> Choose File
+    </label>
+    <input id="file-upload" type="file" name="image" style="display:none;" onchange="this.form.submit()" />
+  </form>
+</body>
