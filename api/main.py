@@ -4,12 +4,12 @@ $pip install uvicorn
 and then in the console type uvicorn main:app to see api.
 """
 import os
-from fastapi import FastAPI, File
+from fastapi import FastAPI, File, BackgroundTasks
 from fastapi.responses import HTMLResponse
 import numpy as np
 from PIL import Image
 import cv2
-from wildfire_control import generate_client_id
+from wildfire_control import generate_client_id, remove_client_id
 from networking import image_to_model
 
 
@@ -35,9 +35,10 @@ async def upload_button():
 
 
 @app.post("/classify-image")
-async def classify_image(image: bytes = File(...)):
+async def classify_image(background_tasks: BackgroundTasks, image: bytes = File(...)):
     # Loads the image uploaded and resizes it
     client_id = generate_client_id()
 
     prediction = await image_to_model(client_id, image)
+    background_tasks.add_task(remove_client_id, client_id)
     return { "prediction": prediction }

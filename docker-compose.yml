@@ -12,5 +12,5 @@ services:
   fireml:
     container_name: "fireml"
     build:
-      context: "./fireML"
+      context: "./FireML/FireClassifier"
       dockerfile: "Dockerfile"
