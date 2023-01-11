@@ -11,11 +11,7 @@ from PIL import Image
 import cv2
 from wildfire_control import generate_client_id
 from networking import image_to_model
-from aescipher import AESCipher
 
-
-key = "evensteven"
-AES = AESCipher(key)
 
 app = FastAPI()
 
@@ -43,5 +39,5 @@ async def classify_image(image: bytes = File(...)):
     # Loads the image uploaded and resizes it
     client_id = generate_client_id()
 
-    prediction = await image_to_model(AES, client_id, image)
+    prediction = await image_to_model(client_id, image)
     return { "prediction": prediction }

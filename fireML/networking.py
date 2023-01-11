@@ -1,21 +1,17 @@
 import asyncio
 import socket
 from aescipher import AESCipher
+from settings import get_encryption_key
 from prediction import model_predict, preprocess_image
 
 
-CHUNK_SIZE = 1024
+AES = AESCipher(get_encryption_key())
 HOST_SERVER = socket.gethostname()
 PORT_SERVER = 5000
+CHUNK_SIZE = 1024
 
-AES = None
 
-async def run_server(aes):
-    global AES
-
-    if AES is None:
-        AES = aes
-
+async def run_server():
     server = await asyncio.start_server(handler, HOST_SERVER, PORT_SERVER)
     async with server:
         await server.serve_forever()
