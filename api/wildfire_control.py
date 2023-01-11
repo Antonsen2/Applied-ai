@@ -1,19 +1,5 @@
-import pickle
-import numpy as np
-import os
-import cv2
-
-def load_image(image_path):
-    image = cv2.imread(image_path)
-    return [image]
-
-def import_model(model_file):
-    with open(model_file, "rb") as f:
-        model = pickle.load(f)
-    return model
-
-def run_model(image):
-    model = import_model("C:\Code\Applied-ai\CNN50accuracy.sav")
-    result = model.predict(image)
-    return result
-    
+def generate_client_id() -> str:
+    # TODO: Algorithm for unique id
+    # client_id -> Time based cryto with random salt
+    #   if client_id already in pool -> new salt
+    return b"2a34e"
