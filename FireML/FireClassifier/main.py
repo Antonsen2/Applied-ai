@@ -1,6 +1,4 @@
-import os
 import asyncio
-from Crypto import Random
 from networking import run_server
 
 

@@ -17,7 +17,8 @@ async def run_server():
         await server.serve_forever()
 
 
-async def handler(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+async def handler(reader: asyncio.StreamReader,
+                  writer: asyncio.StreamWriter) -> None:
     init_data = await reader.read(CHUNK_SIZE)
     checksum, client_id = AES.decrypt(init_data.strip()).split()
     checksum = int(checksum)

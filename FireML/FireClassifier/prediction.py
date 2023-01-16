@@ -6,7 +6,7 @@ from keras_preprocessing.image import img_to_array
 from keras.applications.mobilenet_v2 import preprocess_input
 
 
-MODEL_PATH="model/model.h5"
+MODEL_PATH = "model/model.h5"
 MODEL = keras.models.load_model(MODEL_PATH)
 
 
