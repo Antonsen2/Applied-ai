@@ -1,4 +1,3 @@
-import os
 import json
 from typing import List
 from fastapi import FastAPI, File, Request, UploadFile, BackgroundTasks
@@ -37,7 +36,7 @@ async def classify_image(background_tasks: BackgroundTasks,
     return templates.TemplateResponse("classify_post.html", {
                                       "request": request,
                                       "label": json_prediction,
-                                      "image": image,
+                                      "image": images,
                                       "coords": coords})
 
 
@@ -51,10 +50,11 @@ async def api_classify_image(background_tasks: BackgroundTasks,
     for image in images:
         bytes_image = await image.read()
         result = await image_to_model(client_id, bytes_image)
-        prediction.append({"result": result, "filename": image.filename, "coords": coords})
+        prediction.append({"result": result,
+                           "filename": image.filename,
+                           "coords": coords})
 
     json_prediction = json.dumps(prediction)
 
     background_tasks.add_task(remove_client_id, client_id)
     return JSONResponse(content=json_prediction)
-
