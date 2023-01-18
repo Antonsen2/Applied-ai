@@ -7,3 +7,6 @@ data
 venv*
 autogluon-image-prediction/tmp
 user_uploads
+*.jpeg
+*.jpg
+*.png
