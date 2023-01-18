@@ -8,9 +8,38 @@ services:
       dockerfile: "Dockerfile"
     ports:
       - "127.0.0.1:8000:8000"
-      - "5001"
+    depends_on:
+      - vault
+
   fireml:
     container_name: "fireml"
     build:
       context: "./FireML/FireClassifier"
       dockerfile: "Dockerfile"
+    depends_on:
+      - vault
+
+  vault:
+    container_name: "vault"
+    image: "vault:1.12.2"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: "${TOKEN}"
+      VAULT_ADDR: "http://0.0.0.0:8200"
+    entrypoint: ['vault', 'server', '-dev', '-dev-listen-address=0.0.0.0:8200']
+    ports:
+      - "8200:8200"
+    cap_add:
+      - IPC_LOCK
+
+  vault-init:
+    container_name: vault-init
+    image: "vault:1.12.2"
+    depends_on:
+      - vault
+    restart: "no"
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: "${TOKEN}"
+    entrypoint: ['sh', '-c', '/vault-transit-init.sh']
+    volumes:
+      - ./vault/vault-transit-init.sh:/vault-transit-init.sh
