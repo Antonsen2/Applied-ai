@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 import albumentations as A
 import torch

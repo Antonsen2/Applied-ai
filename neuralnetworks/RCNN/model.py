@@ -1,8 +1,10 @@
 import torch
+import numpy as np
 
-from vision.references.detection.engine import train_one_epoch, evaluate
+from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision.models.detection import faster_rcnn, fasterrcnn_resnet50_fpn
+from vision.references.detection.engine import train_one_epoch, evaluate
 
 from neuralnetworks.RCNN import config
 from neuralnetworks.RCNN.dataset import WildfireDataset
@@ -89,6 +91,21 @@ class RCNN:
         self.model.to(config.DEVICE)
         self.model.eval()
 
-    def predict(self) -> None:
-        # TODO: Add single image/folder with images prediction function
-        pass
+    def predict(self, images_dir: list[str]) -> tuple:
+        self.model.eval()
+
+        images = list()
+        for img in images_dir:
+            img = Image.open(img)
+            img = config.VAL_TRANSFORM(img)
+            img = torch.as_tensor(img, dtype=torch.float32)
+            images.append(img)
+
+        preds = self.model.predict(images)
+        outputs = [{k: v.to(torch.device('cpu')) for k, v in target.items()} for target in preds]
+
+        boxes = outputs[0]['boxes'].data.cpu().numpy().astype(np.int32)
+        scores = outputs[0]['scores'].data.cpu().numpy()
+        labels = outputs[0]['labels'].data.cpu().numpy().astype(np.int32)
+
+        return boxes, scores, labels

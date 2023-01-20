@@ -8,12 +8,23 @@ from typing import Any
 from PIL import Image
 
 class LabelMap:
+    """
+    Class to map and encode labels for training
+
+    Attributes:
+        map: dict, {'class-label': id (int)} aka first label = 1 etc.
+        reversed_map: dict, self.map reversed {id: 'class-label'}
+
+    Example:
+        In our case the map looks like this:
+            {'smoke': 1, 'fire': 2}
+    """
     def __init__(self, labels: list) -> None:
-        self._map = {label: i+1 for i, label in enumerate(labels)}
-        self.reversed_map = {i: label for i, label in enumerate(labels)}
+        self.map: dict = {label: i+1 for i, label in enumerate(labels)}
+        self.reversed_map: dict = {i+1: label for i, label in enumerate(labels)}
 
     def fit(self, df: pd.DataFrame, col: str) -> pd.DataFrame:
-        df[col] = df[col].map(self._map)
+        df[col] = df[col].map(self.map)
         return df
 
 class WildfireDataset(Dataset):
@@ -64,7 +75,7 @@ class WildfireDataset(Dataset):
             img = transformed['image']
             target['boxes'] = torch.as_tensor(transformed['bboxes'], dtype=torch.float32)
 
-        return torch.as_tensor(img, dtype=torch.float.32), target
+        return torch.as_tensor(img, dtype=torch.float32), target
 
     def get_w_h(self, image: str) -> tuple:
         """Get image (width x height)"""
