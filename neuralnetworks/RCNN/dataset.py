@@ -33,7 +33,7 @@ class WildfireDataset(Dataset):
         self.img_path = img_path
         self.labels = labels
         self.__label_map = LabelMap(self.labels)
-        self.df = self.__label_map.fit(df)
+        self.df = self.__label_map.fit(df, 'class')
         self.images = self.df['filename'].unique()
         self.transforms = transforms
 
