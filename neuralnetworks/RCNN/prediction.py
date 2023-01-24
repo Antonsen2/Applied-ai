@@ -54,9 +54,9 @@ def load_model() -> FasterRCNN:
 
     return model
 
-def get_relevant_scores(threshold: float, labels: list, scores: list, boxes: list) -> tuple:
+def get_relevant_scores(threshold: float, boxes: list, scores: list, labels: list) -> tuple:
     x = len([score for score in scores if score >= threshold])
-    return labels[:x], scores[:x], boxes[:x]
+    return boxes[:x], scores[:x], labels[:x]
 
 def predict(model, img_path: str, transform: torchvision.transforms, threshold: float) -> tuple:
     img = Image.open(img_path)
@@ -121,4 +121,3 @@ def plot_prediction(img_path: str, predictions: tuple) -> None:
     )
 
     plt.show()
-    
