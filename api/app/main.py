@@ -28,6 +28,8 @@ async def classify_image(request: Request, images: List[UploadFile] = File(...),
   for image in images:
     bytes_image = await image.read()
     processed_image = wildfire_control.process_single_image(bytes_image)
+    obj_result = wildfire_control.run_obj_model(bytes_image)
+    print(obj_result)
     result = wildfire_control.run_model(processed_image)
     prediction.append([result, image.filename])
   json_prediction = json.dumps(prediction)
@@ -41,6 +43,7 @@ async def api_classify_image(images: List[UploadFile]= File(...), coords: List =
   for image in images:
     bytes_image = await image.read()
     processed_image = wildfire_control.process_single_image(bytes_image)
+    
     result = wildfire_control.run_model(processed_image)
     prediction.append({"result": result, "filename": image.filename, "coords": coords})
   json_prediction = json.dumps(prediction)

@@ -4,6 +4,13 @@ from keras.applications.mobilenet_v2 import preprocess_input
 import keras.models
 from PIL import Image
 import io
+import torchvision
+import torch
+import matplotlib.pyplot as plt
+import torchvision.transforms as transforms
+
+
+LABELS = ['smoke', 'fire']
 
 def process_single_image(image: bytes):
     """Takes an image in bytes processes it to the right format for the model.
@@ -22,6 +29,7 @@ def process_single_image(image: bytes):
 def import_model(model_file):
     return keras.models.load_model(model_file)
 
+
 def run_model(image):
     model = import_model("C:\Code\Applied-ai\model_new(4).h5")
     pred = model.predict(image)
@@ -29,4 +37,90 @@ def run_model(image):
     labels = {0: 'Fire detected', 1: 'No fire detected'}
     pred = labels[pred]
     return pred
+
+
+def load_obj_model():
     
+    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(
+        pretrained=False,
+        num_classes=len(LABELS)+1
+    )
+    IN_FEATURES = model.roi_heads.box_predictor.cls_score.in_features
+
+    model.load_state_dict(torch.load('C:/Code/Applied-ai/model_include_fire.pt', map_location='cpu'))
+    model.eval()
+
+    return model
+
+def get_relevant_scores(threshold: float, boxes: list, scores: list, labels: list) -> tuple:
+    x = len([score for score in scores if score >= threshold])
+    return boxes[:x], scores[:x], labels[:x]
+
+
+def run_obj_model(image):
+    image = Image.open(io.BytesIO(image))
+    model = load_obj_model()
+    transform = transforms.Compose([transforms.ToTensor()])
+
+    pred_img = transform(image)
+    pred_img = pred_img.view(1, 3, pred_img.shape[1], pred_img.shape[2])
+
+    preds = model(pred_img)
+    outputs = [{k: v.to(torch.device('cpu')) for k, v in target.items()} for target in preds]
+
+    boxes = outputs[0]['boxes'].data.cpu().numpy().astype(np.int32)
+    scores = outputs[0]['scores'].data.cpu().numpy()
+    labels = outputs[0]['labels'].data.cpu().numpy().astype(np.int32)
+
+    boxes, scores, labels = get_relevant_scores(0.80, boxes, scores, labels)
+    
+    return boxes, scores, labels
+
+
+def plot_prediction(img_path: str, predictions: tuple) -> None:
+    patches = []
+
+    img = Image.open(img_path)
+    _, ax = plt.subplots(figsize=(13,7))
+    plt.imshow(img)
+
+    box_counter = 0
+    for box, score, label in zip(predictions[0], predictions[1], predictions[2]):
+        box_counter = 1
+        score *= 100
+        label = f'{str(LABELS[label-1])} : {score: .2f}%'
+
+        x_min = int(box[0])
+        y_min = int(box[1])
+        x_max = int(box[2])
+        y_max = int(box[3])
+
+        plt.gca().add_patch(Rectangle(
+            (x_min, y_min),
+            x_max - x_min,
+            y_max - y_min,
+            edgecolor=COLORS[box_counter],
+            facecolor=None,
+            fill=False,
+            lw=1
+        ))
+
+        patch = Line2D(
+            [0], [0],
+            marker='o',
+            color='w',
+            markerfacecolor=COLORS[box_counter],
+            label=label
+        )
+        patches.append(patch)
+    
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.legend(
+        bbox_to_anchor=(1.05, 1),
+        loc='upper left',
+        borderaxespad=0.,
+        handles=[patch for patch in patches]
+    )
+
+    plt.show()
