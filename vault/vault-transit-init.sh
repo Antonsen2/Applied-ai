@@ -1,19 +1,14 @@
 #! /bin/sh
-CHECK_INTERVAL_S=1
+
+VAULT_RETRIES=5
 
 if [ -z $VAULT_ADDR ]; then
   export VAULT_ADDR="http://127.0.0.1:8200"
 fi
 
-while $true; do
-    sleep $CHECK_INTERVAL_S
-
-    vault status
-
-    if [ $? -eq 0 ]; then
-        break
-    fi
-
+until vault status > /dev/null 2>&1 || [ "$VAULT_RETRIES" -eq 0 ]; do
+    echo "Waiting for vault to start...: $(($VAULT_RETRIES--))"
+    sleep 1
 done
 
 # login with root token at $VAULT_ADDR
