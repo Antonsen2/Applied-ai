@@ -1,10 +1,11 @@
 from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import JSONResponse
-
+import plotly.graph_objects as go
 from typing import List
 from fastapi.templating import Jinja2Templates
 import json
 import sys
+import matplotlib.pyplot as plt, mpld3
 sys.path.append('../')
 import wildfire_control
 """
@@ -29,11 +30,11 @@ async def classify_image(request: Request, images: List[UploadFile] = File(...),
     bytes_image = await image.read()
     processed_image = wildfire_control.process_single_image(bytes_image)
     obj_result = wildfire_control.run_obj_model(bytes_image)
-    print(obj_result)
+    
     result = wildfire_control.run_model(processed_image)
     prediction.append([result, image.filename])
   json_prediction = json.dumps(prediction)
-  return templates.TemplateResponse('classify_post.html', {"request": request, "label": json_prediction, "image": image, "coords": coords})
+  return templates.TemplateResponse('classify_post.html', {"request": request, "label": json_prediction, "image": obj_result, "coords": coords})
 
 
 @app.post("/api/classify")

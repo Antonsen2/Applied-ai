@@ -8,6 +8,10 @@ import torchvision
 import torch
 import matplotlib.pyplot as plt
 import torchvision.transforms as transforms
+from matplotlib.patches import Rectangle
+from matplotlib.lines import Line2D
+import plotly.graph_objects as go
+import matplotlib.pyplot as plt, mpld3
 
 
 LABELS = ['smoke', 'fire']
@@ -73,14 +77,14 @@ def run_obj_model(image):
     labels = outputs[0]['labels'].data.cpu().numpy().astype(np.int32)
 
     boxes, scores, labels = get_relevant_scores(0.80, boxes, scores, labels)
-    
-    return boxes, scores, labels
+    new_img = plot_prediction(image, (boxes, scores, labels))
+    return new_img
 
 
-def plot_prediction(img_path: str, predictions: tuple) -> None:
+def plot_prediction(img, predictions: tuple) -> None:
+
     patches = []
 
-    img = Image.open(img_path)
     _, ax = plt.subplots(figsize=(13,7))
     plt.imshow(img)
 
@@ -99,7 +103,6 @@ def plot_prediction(img_path: str, predictions: tuple) -> None:
             (x_min, y_min),
             x_max - x_min,
             y_max - y_min,
-            edgecolor=COLORS[box_counter],
             facecolor=None,
             fill=False,
             lw=1
@@ -109,7 +112,6 @@ def plot_prediction(img_path: str, predictions: tuple) -> None:
             [0], [0],
             marker='o',
             color='w',
-            markerfacecolor=COLORS[box_counter],
             label=label
         )
         patches.append(patch)
@@ -122,5 +124,8 @@ def plot_prediction(img_path: str, predictions: tuple) -> None:
         borderaxespad=0.,
         handles=[patch for patch in patches]
     )
+    return mpld3.fig_to_html(plt.gcf())
+    # buffer1 = io.BytesIO()
+    # plt.savefig(buffer1, format='png')
 
-    plt.show()
+    # return buffer1
