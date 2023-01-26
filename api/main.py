@@ -3,12 +3,15 @@ from typing import List
 from fastapi import FastAPI, File, Request, UploadFile, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from wildfire_control import generate_client_id, remove_client_id
 from networking import image_to_model
 
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="./static"), name="static")
 templates = Jinja2Templates(directory="./templates")
+
 
 
 @app.get('/classify')
