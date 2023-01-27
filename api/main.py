@@ -14,6 +14,7 @@ app.mount("/static", StaticFiles(directory="./static"), name="static")
 templates = Jinja2Templates(directory="./templates")
 image_store = dict()
 
+
 @app.get('/classify')
 async def read_html(request: Request):
     return templates.TemplateResponse("classify.html", {"request": request})

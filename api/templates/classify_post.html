@@ -1,4 +1,5 @@
 <style>
+
     .fiery-text {
         color: #f6660d; /* Fiery orange color */
         font-size: 20px;
@@ -14,41 +15,49 @@
         background-position: center; /* Center the image */
     }
 
-    img {
-        width: 30%;
-        height: auto;
-        margin-bottom: 20px;
+    .container {
+        width: 100%;
     }
 
-    .container {
-        background: white;
-        width: 80%; /* Adjust as needed */
-        height: 80%; /* Adjust as needed */
-        margin: 10% auto; /* Center the container */
-        position: relative; /* Allows the images to be positioned on top */
-}
+    table {
+        margin: auto;
+        width: 75%; /* Adjust as needed */
+        border-collapse: collapse; /* Remove the spacing between cells */
+        background-color: white;
+    }
 
-    .image {
-        position: absolute; /* Position the images on top of the container */
-        top: 0;
-        left: 0;
-        width: 50%; /* Adjust as needed */
-        height: 100%; /* Adjust as needed */
-}
+    th, td {
+        border: 1px solid #ddd; /* Add a border to the cells */
+        padding: 8px; /* Add padding to the cells */
+        text-align: left; /* Align the text to the left */
+    }
 
-    .image:nth-child(2) {
-        left: 50%; /* Move the second image to the right of the first */
-}
-    </style>
-    <body>
-        <div class="fiery-text">
+    th {
+        background-color: #f6660d; /* Fiery orange background color for the header */
+        color: white; /* White text color for the header */
+    }
+
+    th.image {
+        width: 30%;
+    }
+</style>
+<body>
+    <div class="container">
+        <table>
+            <tr>
+                <th class="image">Image</th>
+                <th class="label">Label</th>
+                <th class="coordinates">Coordinates</th>
+            </tr>
             {% for result in results %}
-            <div class="result">
-                <img src="{{ result.image_path }}" alt="{{ result.label }}">
-                <p>{{ result.label }}</p>
-                <p>Coordinates = {{ result.coords }}</p>
-            </div>
-            <br/>
+            <tr>
+                <td>
+                    <img src="{{ result.image_path }}" alt="{{ result.label }}">
+                </td>
+                <td>{{ result.label }}</td>
+                <td>{{ result.coords }}</td>
+            </tr>
             {% endfor %}
-        </div>
-    </body>
+        </table>
+    </div>
+</body>
