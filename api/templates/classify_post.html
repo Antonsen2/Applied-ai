@@ -1,6 +1,7 @@
+<!-- #comment out code
 <style>
 .fiery-text {
-    color: #ff6600; /* Fiery orange color */
+    color: #d8cdc6; /* Fiery orange color */
     font-size: 20px;
     font-weight: bold;
     text-align: center; /* Center the text */
@@ -19,3 +20,60 @@ body {
         <p>Coordinates = {{coords}}</p>
     </div>
 </body>
+-->
+
+<style>
+    .fiery-text {
+        color: #d8cdc6; /* Fiery orange color */
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center; /* Center the text */
+        margin-bottom: 20px;
+    }
+
+    body {
+        background-image: url('/static/images/the-forest-fell.jpg');
+        background-size: cover; /* Scale the image to fit the entire screen */
+        background-repeat: no-repeat; /* Do not repeat the image */
+        background-position: center; /* Center the image */
+    }
+    
+    img {
+        width: 20%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .container {
+        background: white;
+        width: 80%; /* Adjust as needed */
+        height: 80%; /* Adjust as needed */
+        margin: 10% auto; /* Center the container */
+        position: relative; /* Allows the images to be positioned on top */
+}
+
+    .image {
+        position: absolute; /* Position the images on top of the container */
+        top: 0;
+        left: 0;
+        width: 50%; /* Adjust as needed */
+        height: 100%; /* Adjust as needed */
+}
+
+    .image:nth-child(2) {
+        left: 50%; /* Move the second image to the right of the first */
+}
+    </style>
+
+    <body>
+        <div class="fiery-text">
+            {% for result in results %}
+            <div class="result">
+                <img src="{{ result.image_path }}" alt="{{ result.label }}">
+                <p>{{ result.label }}</p>
+                <p>Coordinates = {{ result.coords }}</p>
+            </div>
+            <br/>
+            {% endfor %}
+        </div>
+    </body>
