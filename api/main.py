@@ -32,7 +32,7 @@ async def classify_image(background_tasks: BackgroundTasks,
 
         # Predict image using model
         prediction = await image_to_model(client_id, bytes_image)
-        
+
         # Save and prepare image path to be able to display on results page
         image_id = str(uuid.uuid1())
         image_store[image_id] = bytes_image
@@ -51,6 +51,7 @@ async def classify_image(background_tasks: BackgroundTasks,
     return templates.TemplateResponse("classify_post.html", {
                                       "request": request,
                                       "results": results})
+
 
 @app.get('/classify/result/image/{image_id}')
 async def get_result_image(image_id):
