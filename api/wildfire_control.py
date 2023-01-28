@@ -15,6 +15,7 @@ def generate_client_id() -> str:
     logger.debug(f"Generated new client ID: {client_id}")
     return client_id
 
+
 async def remove_client_id(client_id: bytes):
     CLIENT_ID_POOL.remove(client_id)
     logger.debug(f"Removed client ID: {client_id}")
