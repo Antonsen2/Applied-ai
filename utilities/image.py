@@ -1,7 +1,12 @@
 import os
 import shutil
+import logging
 
 from PIL import Image
+
+
+logging.basicConfig(level=logging.INFO)  # Set the logging level
+logger = logging.getLogger(__name__)
 
 
 def resize_image(image_dir: str, new_size: tuple[int, int],
@@ -21,6 +26,7 @@ def resize_image(image_dir: str, new_size: tuple[int, int],
     img = img.resize(new_size)
     img = img.convert('RGB')  # Remove Alpha-Channel
     img.save(f'{new_dir}/{image_category}-resized/{image_category}-{num_suffix}.jpg')
+    logger.info(f'Successfully resized image {image_dir}')
 
 def bulk_resize_images(data_dir: str, image_category: str,
                        new_size: tuple[int, int], new_dir: str = None) -> None:
@@ -46,6 +52,7 @@ def bulk_resize_images(data_dir: str, image_category: str,
                 num_suffix=i,
                 new_dir=new_dir if new_dir else data_dir
             )
+    logger.info(f'Successfully resized all images in {data_dir}')
 
 def bulk_move_images(old_dir: str, new_dir: str) -> None:
     """
@@ -58,8 +65,12 @@ def bulk_move_images(old_dir: str, new_dir: str) -> None:
     """
     for img in os.listdir(old_dir):
         if os.path.isfile(os.path.join(old_dir, img)):
-            shutil.move(
-                src=old_dir + img,
-                dst=new_dir + img,
-                copy_function=shutil.copy2
-            )
+            try:
+                shutil.move(
+                    src=old_dir + img,
+                    dst=new_dir + img,
+                    copy_function=shutil.copy2
+                )
+                logger.info(f"Successfully moved {img} from {old_dir} to {new_dir}")
+            except Exception as e:
+                logger.error(f"Error moving {img} from {old_dir} to {new_dir}: {e}")

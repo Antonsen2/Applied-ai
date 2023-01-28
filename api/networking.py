@@ -1,15 +1,18 @@
 import asyncio
+import socket
 import logging
-from settings import get_encryption_key
 from aescipher import AESCipher
+from settings import get_encryption_key
 
+# Set up logging
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(message)s')
 
 AES = AESCipher(get_encryption_key())
 HOST_FIREML = "fireml"
 PORT_FIREML = 5000
 CHUNK_SIZE = 1024
-
-logger = logging.getLogger(__name__)
 
 
 async def image_to_model(client_id: bytes, image) -> str:
@@ -30,4 +33,4 @@ async def image_to_model(client_id: bytes, image) -> str:
     response = await reader.read(CHUNK_SIZE)
     checksum, client_id, msg = AES.decrypt(response.strip()).split()
     logger.debug(f"Got response: {msg.decode()}")
-    return msg.decode()
+    return msg.decode() 

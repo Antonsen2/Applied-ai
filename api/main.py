@@ -11,8 +11,9 @@ from wildfire_control import generate_client_id, remove_client_id
 from networking import image_to_model
 
 # Set up logging
-logging.basicConfig(level=logging.DEBUG)
-
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(message)s')
 # Set up Fast API
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="./static"), name="static")
@@ -20,9 +21,6 @@ templates = Jinja2Templates(directory="./templates")
 
 # Set up in-memory storage
 image_store = dict()
-
-logger = logging.getLogger(__name__)
-
 
 @app.get('/classify')
 async def read_html(request: Request):
