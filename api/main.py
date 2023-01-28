@@ -22,6 +22,7 @@ templates = Jinja2Templates(directory="./templates")
 # Set up in-memory storage
 image_store = dict()
 
+
 @app.get('/classify')
 async def read_html(request: Request):
     return templates.TemplateResponse("classify.html", {"request": request})
@@ -52,7 +53,7 @@ async def classify_image(background_tasks: BackgroundTasks,
             "prediction": prediction,
             "label": label,
             "coords": coords,
-            "image_path": f"/classify/result/image/{image_id}"
+            "image_path":f"/classify/result/image/{image_id}"
         })
 
         logger.info(f"Prediction results for: {image.filename}, label: {label}")
@@ -62,7 +63,6 @@ async def classify_image(background_tasks: BackgroundTasks,
     return templates.TemplateResponse("classify_post.html", {
                                       "request": request,
                                       "results": results})
-
 
 
 @app.get('/classify/result/image/{image_id}')
