@@ -33,4 +33,4 @@ async def image_to_model(client_id: bytes, image) -> str:
     response = await reader.read(CHUNK_SIZE)
     checksum, client_id, msg = AES.decrypt(response.strip()).split()
     logger.debug(f"Got response: {msg.decode()}")
-    return msg.decode() 
+    return msg.decode()

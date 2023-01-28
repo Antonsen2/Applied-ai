@@ -3,6 +3,8 @@ from uuid import uuid4
 
 CLIENT_ID_POOL = []
 
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(message)s')
 logger = logging.getLogger(__name__)
 
 

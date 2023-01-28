@@ -53,7 +53,7 @@ async def classify_image(background_tasks: BackgroundTasks,
             "prediction": prediction,
             "label": label,
             "coords": coords,
-            "image_path":f"/classify/result/image/{image_id}"
+            "image_path": f"/classify/result/image/{image_id}"
         })
 
         logger.info(f"Prediction results for: {image.filename}, label: {label}")
