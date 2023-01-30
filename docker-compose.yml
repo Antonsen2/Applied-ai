@@ -14,3 +14,5 @@ services:
     build:
       context: "./FireML/FireClassifier"
       dockerfile: "Dockerfile"
+    environment:
+      LOG_LEVEL: "${LOG_LEVEL}"
