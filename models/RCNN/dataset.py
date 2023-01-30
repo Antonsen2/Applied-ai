@@ -1,19 +1,26 @@
+"""Custom Dataset Module"""
+
+
 import os
+from typing import Any
+
 import numpy as np
 import pandas as pd
 import torch
 
-from torch.utils.data import Dataset
-from typing import Any
 from PIL import Image
+from torch.utils.data import Dataset
+
 
 class LabelMap:
     """
     Class to map and encode labels for training
+
     Attributes:
         map: dict, {'class-label': id (int)} aka first label = 1 etc.
         reversed_map: dict, self.map reversed {id: 'class-label'}
-    Example:
+
+    Example usage:
         In our case the map looks like this:
             {'smoke': 1, 'fire': 2}
     """
@@ -25,8 +32,11 @@ class LabelMap:
         df[col] = df[col].map(self.map)
         return df
 
+
 class WildfireDataset(Dataset):
-    def __init__(self, df: pd.DataFrame, img_path: str, labels: list, transforms: Any = None, **kwargs) -> None:
+    """Custom Dataset for Wildfire Images"""
+    def __init__(self, df: pd.DataFrame, img_path: str,
+                 labels: list, transforms: Any = None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.img_path = img_path
         self.labels = labels

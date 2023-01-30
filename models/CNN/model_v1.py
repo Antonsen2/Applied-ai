@@ -1,14 +1,21 @@
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-import keras
-import tensorflow as tf
-from sklearn.model_selection import train_test_split
+"""Initial CNN model used in research phase of the project"""
+
+
 import os
+
 import cv2
-import numpy as np
+import keras
 import pickle
 
-def load_images_from_folder(folder):
+import numpy as np
+import tensorflow as tf
+
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from sklearn.model_selection import train_test_split
+
+
+def load_images_from_folder(folder: str) -> list:
     images = []
     for filename in os.listdir(folder):
         img = cv2.imread(os.path.join(folder,filename))
@@ -17,30 +24,25 @@ def load_images_from_folder(folder):
     return images
 
 
-
-def cnn():
-
-
-
-    fire_images = load_images_from_folder("c:/code/applied-ai/data/root/datasets/50-50/fire")
-    forest_images = load_images_from_folder("c:/code/applied-ai/data/root/datasets/50-50/no-fire")
+def cnn(fire_path: str, forest_path: str) -> None:
+    fire_images = load_images_from_folder(fire_path)
+    forest_images = load_images_from_folder(forest_path)
 
     images = fire_images + forest_images
-    
-    #forest_np = np.array(forest_images)
 
     x_list = np.array(images)
     y_list = [0] * 500
     forest = [1] * 500
     y_list.extend(forest)
     y_list = np.array(y_list)
-    #print(len(y_list))
-    #print(len(x_list))
 
 
-    x_train, x_test, y_train, y_test = train_test_split(x_list, y_list, random_state=104, test_size=0.25, shuffle=True)
-
-    x_train, x_val, y_train, y_val= train_test_split(x_train, y_train, random_state=104, test_size=0.1, shuffle=True)
+    x_train, x_test, y_train, y_test = train_test_split(
+        x_list, y_list, random_state=104, test_size=0.25, shuffle=True
+    )
+    x_train, x_val, y_train, y_val = train_test_split(
+        x_train, y_train, random_state=104, test_size=0.1, shuffle=True
+    )
 
     # Create the model
     model = Sequential()
@@ -70,4 +72,8 @@ def cnn():
     pickle.dump(model, open(filename, 'wb'))
 
 
-cnn()
+if __name__ == '__main__':
+    cnn(
+        fire_path="c:/code/applied-ai/data/root/datasets/50-50/fire",
+        forest_path="c:/code/applied-ai/data/root/datasets/50-50/no-fire"
+    )

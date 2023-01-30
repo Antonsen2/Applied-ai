@@ -1,3 +1,6 @@
+"""Configuration Settings for Faster RCNN model"""
+
+
 import pandas as pd
 import albumentations as A
 import torch

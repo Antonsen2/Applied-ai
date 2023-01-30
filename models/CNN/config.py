@@ -1,4 +1,4 @@
-"""Configuration settings for our Neural Networks etc."""
+"""Configuration settings for the CNN model"""
 
 from pathlib import Path
 

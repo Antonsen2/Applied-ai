@@ -10,14 +10,6 @@ from PIL import Image
 from torchvision.models.detection import FasterRCNN
 
 
-LABELS = ['smoke', 'fire']
-NUM_OF_CLASSES = len(LABELS)+1
-SAVE_PATH = './outputs/models/'
-MODEL_NAME = 'model_include_fire.pt'
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-TRANSFORM = transforms.Compose([transforms.ToTensor()])
-IMG_PATH = '../data/new-data/datasets/full/fire/fire-2065.jpg'
-
 # Colors are not working correctly yet
 COLORS = [
     '#d90166',
@@ -42,23 +34,26 @@ COLORS = [
     '#fe6700',
 ]
 
-def load_model() -> FasterRCNN:
+def load_model(num_classes: int, save_path: str) -> FasterRCNN:
+    """Load the Faster RCNN model"""
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(
         pretrained=False,
-        num_classes=NUM_OF_CLASSES
+        num_classes=num_classes
     )
-    IN_FEATURES = model.roi_heads.box_predictor.cls_score.in_features
+    in_features = model.roi_heads.box_predictor.cls_score.in_features
 
-    model.load_state_dict(torch.load(SAVE_PATH + MODEL_NAME))
+    model.load_state_dict(torch.load(save_path))
     model.eval()
 
     return model
 
 def get_relevant_scores(threshold: float, boxes: list, scores: list, labels: list) -> tuple:
+    """Get relevant scores based on a threshold score"""
     x = len([score for score in scores if score >= threshold])
     return boxes[:x], scores[:x], labels[:x]
 
 def predict(model, img_path: str, transform: torchvision.transforms, threshold: float) -> tuple:
+    """Prediction function, separated from the RCNN class"""
     img = Image.open(img_path)
     pred_img = transform(img)
     pred_img = pred_img.view(1, 3, pred_img.shape[1], pred_img.shape[2])
@@ -71,10 +66,18 @@ def predict(model, img_path: str, transform: torchvision.transforms, threshold: 
     labels = outputs[0]['labels'].data.cpu().numpy().astype(np.int32)
 
     boxes, scores, labels = get_relevant_scores(threshold, boxes, scores, labels)
-    
+
     return boxes, scores, labels
 
-def plot_prediction(img_path: str, predictions: tuple) -> None:
+def plot_prediction(img_path: str, predictions: tuple, labels: list) -> None:
+    """
+    Plot function to plot predictions
+
+    Params:
+        img_path: str, Path to image directory
+        predictions: tuple, Predicted boxes, scores and labels
+        labels: list, List of labels  
+    """
     patches = []
 
     img = Image.open(img_path)
@@ -85,7 +88,7 @@ def plot_prediction(img_path: str, predictions: tuple) -> None:
     for box, score, label in zip(predictions[0], predictions[1], predictions[2]):
         box_counter = 1
         score *= 100
-        label = f'{str(LABELS[label-1])} : {score: .2f}%'
+        label = f'{str(labels[label-1])} : {score: .2f}%'
 
         x_min = int(box[0])
         y_min = int(box[1])
@@ -110,7 +113,7 @@ def plot_prediction(img_path: str, predictions: tuple) -> None:
             label=label
         )
         patches.append(patch)
-    
+
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     ax.legend(

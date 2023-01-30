@@ -1,3 +1,6 @@
+"""Module for the Faster RCNN model"""
+
+
 import torch
 import numpy as np
 
@@ -6,12 +9,20 @@ from torch.utils.data import DataLoader
 from torchvision.models.detection import faster_rcnn, fasterrcnn_resnet50_fpn
 from vision.references.detection.engine import train_one_epoch, evaluate
 
-from neuralnetworks.RCNN import config
-from neuralnetworks.RCNN.dataset import WildfireDataset
+from models.RCNN import config
+from models.RCNN.dataset import WildfireDataset
 
-# TODO: Test train in VSC
 
 class RCNN:
+    """
+    Faster RCCN model used for Object Detection
+
+    Attributes:
+        train_loader: torch DataLoader, Train images converted to a DataLoader
+        valid_loader: torch DataLoader, Validation images converted to a DataLoader
+        model: torchvision fasterrcnn, Model base
+        in_features: fasterrcnn.in_features, Model in features
+    """
     def __init__(self) -> None:
         self.train_loader = DataLoader(
             dataset=WildfireDataset(

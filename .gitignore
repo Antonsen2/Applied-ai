@@ -8,6 +8,7 @@ venv*
 /data
 data
 dataset
+target
 
 # Image Files (plots etc.)
 *.jpeg

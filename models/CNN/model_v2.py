@@ -1,7 +1,9 @@
+"""CNN model v2"""
+
+
 import os.path
 import pandas as pd
 import tensorflow as tf
-import utilities.settings as settings
 
 from keras.layers import Dense, Dropout
 from keras_preprocessing.image import ImageDataGenerator
@@ -9,13 +11,14 @@ from tensorflow.keras import layers, Model
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
-from tensorflow import keras
+
+from models.CNN.config import IMG_SIZE, COLOR_MODE, CLASS_MODE, CHECKPOINT_PATH, IMG_DIR, BATCH_SIZE, RANDOM_SEED
 
 from sklearn.model_selection import train_test_split
 from utilities.data import split_df, create_callback
 
 RESIZE_AND_RESCALE = tf.keras.Sequential([
-  layers.experimental.preprocessing.Resizing(*settings.IMG_SIZE),
+  layers.experimental.preprocessing.Resizing(*IMG_SIZE),
   layers.experimental.preprocessing.Rescaling(1./255),
 ])
 
@@ -41,34 +44,34 @@ class ImageGenerator:
             dataframe=train_df,
             x_col=cols[0] if cols else 'Filepath',
             y_col=cols[1] if cols else 'Label',
-            target_size=settings.IMG_SIZE,
-            color_mode=settings.COLOR_MODE,
-            class_mode=settings.CLASS_MODE,
-            batch_size=settings.BATCH_SIZE,
+            target_size=IMG_SIZE,
+            color_mode=COLOR_MODE,
+            class_mode=CLASS_MODE,
+            batch_size=BATCH_SIZE,
             shuffle=True,
-            seed=settings.RANDOM_SEED,
+            seed=RANDOM_SEED,
             subset='training'
         )
         self.validation_images = TRAIN_GENERATOR.flow_from_dataframe(
             dataframe=train_df,
             x_col=cols[0] if cols else 'Filepath',
             y_col=cols[1] if cols else 'Label',
-            target_size=settings.IMG_SIZE,
-            color_mode=settings.COLOR_MODE,
-            class_mode=settings.CLASS_MODE,
-            batch_size=settings.BATCH_SIZE,
+            target_size=IMG_SIZE,
+            color_mode=COLOR_MODE,
+            class_mode=CLASS_MODE,
+            batch_size=BATCH_SIZE,
             shuffle=True,
-            seed=settings.RANDOM_SEED,
+            seed=RANDOM_SEED,
             subset='validation'
         )
         self.test_images = TEST_GENERATOR.flow_from_dataframe(
             dataframe=test_df,
             x_col=cols[0] if cols else 'Filepath',
             y_col=cols[1] if cols else 'Label',
-            target_size=settings.IMG_SIZE,
-            color_mode=settings.COLOR_MODE,
-            class_mode=settings.CLASS_MODE,
-            batch_size=settings.BATCH_SIZE,
+            target_size=IMG_SIZE,
+            color_mode=COLOR_MODE,
+            class_mode=CLASS_MODE,
+            batch_size=BATCH_SIZE,
             shuffle=False
         )
 
@@ -78,7 +81,7 @@ class ImageGenerator:
         return:
             Pandas Dataframe, dataframe with filepaths and labels mapped
         """
-        filepaths = list(settings.IMG_DIR.glob(r'**/*.JPG')) + list(settings.IMG_DIR.glob(r'**/*.jpg')) + list(settings.IMG_DIR.glob(r'**/*.png'))
+        filepaths = list(IMG_DIR.glob(r'**/*.JPG')) + list(IMG_DIR.glob(r'**/*.jpg')) + list(IMG_DIR.glob(r'**/*.png'))
         labels = list(map(lambda x: os.path.split(os.path.split(x)[0])[1], filepaths))
 
         filepaths = pd.Series(filepaths, name='Filepath').astype(str)
@@ -88,6 +91,7 @@ class ImageGenerator:
         return df
 
 class CNN:
+    """CNN model used for Image Classification"""
     def __init__(self, split: bool = False, cols: list = None, **kwargs) -> None:
         self.history = None
         
@@ -122,7 +126,7 @@ class CNN:
     def train(self, _dir: str, log_dir: str) -> None:
         """Model train method"""
         checkpoint_callback = ModelCheckpoint(
-            settings.CHECKPOINT_PATH,
+            CHECKPOINT_PATH,
             save_weights_only=True,
             monitor='val_accuracy',
             save_best_only=True
