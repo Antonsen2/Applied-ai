@@ -1,12 +1,15 @@
 __pycache__
-notebooks
-/data
+
+# Local Virtual Environments
 .venv
-wildfire-data/
-data
 venv*
-autogluon-image-prediction/tmp
-user_uploads
+
+# Local Data Directories
+/data
+data
+dataset
+
+# Image Files (plots etc.)
 *.jpeg
 *.jpg
 *.png
