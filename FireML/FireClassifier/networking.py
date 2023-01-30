@@ -2,7 +2,6 @@ import asyncio
 import socket
 import logging
 from aescipher import AESCipher
-from settings import get_encryption_key
 from prediction import model_predict, preprocess_image
 
 

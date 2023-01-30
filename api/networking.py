@@ -1,5 +1,4 @@
 import asyncio
-from settings import get_encryption_key
 from aescipher import AESCipher
 
 

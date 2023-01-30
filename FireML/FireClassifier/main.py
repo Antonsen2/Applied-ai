@@ -25,7 +25,7 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 
 def setup_logging():
     level = os.getenv('LOG_LEVEL', None)
-    if level is not None:
+    if level:
         logging_level = LoggingLevel.get_level(level.upper())
         logging.root.setLevel(logging_level)
 
