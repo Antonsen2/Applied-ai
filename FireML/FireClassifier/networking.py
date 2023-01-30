@@ -62,7 +62,7 @@ async def handler(reader: asyncio.StreamReader,
 
     LOGGER.debug("client %s sending response %s", client_id.decode(), msg.decode())
 
-    msg = AES.encrypt(checksum + b" " + msg)
+    msg = AES.encrypt(msg)
     response = msg + b" " * (CHUNK_SIZE - len(msg))
 
     writer.write(response)
