@@ -3,7 +3,7 @@ from settings import get_encryption_key
 from aescipher import AESCipher
 
 
-AES = AESCipher(get_encryption_key())
+AES = AESCipher()
 HOST_FIREML = "fireml"
 PORT_FIREML = 5000
 CHUNK_SIZE = 1024

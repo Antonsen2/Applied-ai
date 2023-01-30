@@ -6,7 +6,7 @@ from settings import get_encryption_key
 from prediction import model_predict, preprocess_image
 
 
-AES = AESCipher(get_encryption_key())
+AES = AESCipher()
 HOST_SERVER = socket.gethostname()
 PORT_SERVER = 5000
 CHUNK_SIZE = 1024
@@ -26,8 +26,8 @@ async def run_server():
 
 async def handler(reader: asyncio.StreamReader,
                   writer: asyncio.StreamWriter) -> None:
-    init_data = await reader.read(CHUNK_SIZE)
-    checksum, client_id = AES.decrypt(init_data.strip()).split()
+    header = await reader.read(CHUNK_SIZE)
+    checksum, client_id = AES.decrypt(header.strip()).split()
     checksum = int(checksum)
     client_id = client_id.decode()
 
@@ -62,8 +62,8 @@ async def handler(reader: asyncio.StreamReader,
 
     LOGGER.debug("client %s sending response %s", client_id.decode(), msg.decode())
 
-    encrypted_msg = AES.encrypt(msg)
-    response = encrypted_msg + b" " * (CHUNK_SIZE - len(encrypted_msg))
+    msg = AES.encrypt(checksum + b" " + msg)
+    response = msg + b" " * (CHUNK_SIZE - len(msg))
 
     writer.write(response)
     await writer.drain()
