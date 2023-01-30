@@ -1,0 +1,3 @@
+Directory for documentation
+
+## EMPTY FILE FOR GITHUB STRUCTURE ##
