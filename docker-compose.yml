@@ -26,6 +26,7 @@ services:
     environment:
       VAULT_ADDR: "http://vault:8200"
       VAULT_TOKEN: "${TOKEN}"
+      LOG_LEVEL: "${LOG_LEVEL}"
     volumes:
       - ./.env:/home/wildfire/.vault-token
 
