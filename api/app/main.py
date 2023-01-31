@@ -25,16 +25,19 @@ async def read_html(request: Request):
 
 @app.post("/classify")
 async def classify_image(request: Request, images: List[UploadFile] = File(...), coords: List = None):
-  prediction = []
+  results = []
   for image in images:
     bytes_image = await image.read()
     processed_image = wildfire_control.process_single_image(bytes_image)
     obj_result = wildfire_control.run_obj_model(bytes_image)
-    
-    result = wildfire_control.run_model(processed_image)
-    prediction.append([result, image.filename])
-  json_prediction = json.dumps(prediction)
-  return templates.TemplateResponse('classify_post.html', {"request": request, "label": json_prediction, "image": obj_result, "coords": coords})
+    prediction = wildfire_control.run_model(processed_image)
+    results.append({
+      "filename": image.filename,
+      "obj_result": obj_result,
+      "prediction": prediction,
+      "label": json.dumps(prediction),
+      "coords": coords, })
+  return templates.TemplateResponse('classify_post.html', {"request": request, "results": results, "coords": coords})
 
 
 @app.post("/api/classify")
@@ -46,7 +49,7 @@ async def api_classify_image(images: List[UploadFile]= File(...), coords: List =
     processed_image = wildfire_control.process_single_image(bytes_image)
     
     result = wildfire_control.run_model(processed_image)
-    prediction.append({"result": result, "filename": image.filename, "coords": coords})
+    prediction.append({"result": result, "filename": image.filename, "coords": coords, "image": image})
   json_prediction = json.dumps(prediction)
   
   return JSONResponse(content=json_prediction)

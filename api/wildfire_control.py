@@ -12,7 +12,13 @@ from matplotlib.patches import Rectangle
 from matplotlib.lines import Line2D
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt, mpld3
+import matplotlib.colors as mcolors
+import random
 
+
+
+COLORS = list(mcolors.cnames.values())
+# COLORS = COLORS = mpl.colormaps['viridis'].resampled(8)
 
 LABELS = ['smoke', 'fire']
 
@@ -84,13 +90,15 @@ def run_obj_model(image):
 def plot_prediction(img, predictions: tuple) -> None:
 
     patches = []
-
+    colors = list(mcolors.cnames.values())
     _, ax = plt.subplots(figsize=(13,7))
     plt.imshow(img)
-
-    box_counter = 0
+    
+    
     for box, score, label in zip(predictions[0], predictions[1], predictions[2]):
-        box_counter = 1
+        box_counter = random.randint(0, len(COLORS))
+        print(box_counter)
+        print(COLORS[box_counter])
         score *= 100
         label = f'{str(LABELS[label-1])} : {score: .2f}%'
 
@@ -103,6 +111,7 @@ def plot_prediction(img, predictions: tuple) -> None:
             (x_min, y_min),
             x_max - x_min,
             y_max - y_min,
+            edgecolor=colors[box_counter],
             facecolor=None,
             fill=False,
             lw=1
@@ -112,6 +121,7 @@ def plot_prediction(img, predictions: tuple) -> None:
             [0], [0],
             marker='o',
             color='w',
+            markerfacecolor=colors[box_counter],
             label=label
         )
         patches.append(patch)
@@ -125,7 +135,3 @@ def plot_prediction(img, predictions: tuple) -> None:
         handles=[patch for patch in patches]
     )
     return mpld3.fig_to_html(plt.gcf())
-    # buffer1 = io.BytesIO()
-    # plt.savefig(buffer1, format='png')
-
-    # return buffer1
