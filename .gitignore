@@ -9,8 +9,3 @@ venv*
 data
 dataset
 target
-
-# Image Files (plots etc.)
-*.jpeg
-*.jpg
-*.png
