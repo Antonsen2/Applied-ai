@@ -19,16 +19,6 @@ COLORS = list(mcolors.cnames.values())
 LABELS = ['smoke', 'fire']
 
 
-
-def run_model(image):
-    model = import_model("C:\Code\Applied-ai\model_new(4).h5")
-    pred = model.predict(image)
-    pred = np.argmax(pred, axis=1)[0]
-    labels = {0: 'Fire detected', 1: 'No fire detected'}
-    pred = labels[pred]
-    return pred
-
-
 def load_obj_model():
     
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(

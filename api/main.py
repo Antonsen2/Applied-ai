@@ -23,13 +23,18 @@ async def classify_image(background_tasks: BackgroundTasks,
                          coords: List = None):
     client_id = generate_client_id()
 
-    prediction = []
+    results = []
     for image in images:
         bytes_image = await image.read()
         result = await image_to_model(client_id, bytes_image)
-        prediction.append([result, image.filename])
+        results.append({
+            "filename": image.filename,
+            "obj_result": None,
+            "prediction": result,
+            "label": json.dumps(result),
+            "coords": coords, })
 
-    json_prediction = json.dumps(prediction)
+    json_prediction = json.dumps(results)
 
     background_tasks.add_task(remove_client_id, client_id)
 
@@ -37,6 +42,7 @@ async def classify_image(background_tasks: BackgroundTasks,
                                       "request": request,
                                       "label": json_prediction,
                                       "image": images,
+                                      "results": results
                                       "coords": coords})
 
 
