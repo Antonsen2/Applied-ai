@@ -12,6 +12,8 @@ from networking import image_to_model
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="./static"), name="static")
 templates = Jinja2Templates(directory="./templates")
+# Initialize images store that persists user uploaded images
+# to make it possible to render via html img tag.
 image_store = dict()
 
 
