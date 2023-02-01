@@ -1,13 +1,14 @@
 import asyncio
 import socket
+import pickle
 import logging
 from aescipher import AESCipher
-from prediction import model_predict, preprocess_image
+from prediction import preprocess_image, model_predict
 
 
 AES = AESCipher()
 HOST_SERVER = socket.gethostname()
-PORT_SERVER = 5000
+PORT_SERVER = 5001
 CHUNK_SIZE = 1024
 
 LOGGER_NAME = "networking"
@@ -54,19 +55,28 @@ async def handler(reader: asyncio.StreamReader,
     fire_prediction = model_predict(image)
     LOGGER.info("client %s image prediction %s", client_id, fire_prediction)
 
-    # send back result
-    client_id = client_id.encode()
-    msg = client_id + b" " + fire_prediction.encode("utf-8")
-    checksum = f"{len(msg)}".encode("utf-8")
-    msg = checksum + b" " + msg
+    # SEND prediction header
+    client_id = client_id.encode("utf-8")
+    checksum = f"{len(client_id)}".encode("utf-8")
+    msg = checksum + b" " + client_id
 
-    LOGGER.debug("client %s sending response %s", client_id.decode(), msg.decode())
+    LOGGER.debug("client %s sending header response %s", client_id.decode(),
+                 msg.decode())
 
     msg = AES.encrypt(msg)
     response = msg + b" " * (CHUNK_SIZE - len(msg))
 
     writer.write(response)
     await writer.drain()
+
+    # SEND prediction
+    prediction_data = pickle.dumps(fire_prediction)
+
+    writer.write(AES.encrypt(prediction_data))
+    await writer.drain()
+    writer.write_eof()
+
+    LOGGER.info("client %s object detection sent", client_id.decode())
 
     writer.close()
     LOGGER.debug("Closed client %s socket communication", client_id.decode())
