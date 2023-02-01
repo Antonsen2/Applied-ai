@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from aescipher import AESCipher
 
 
@@ -6,6 +7,9 @@ AES = AESCipher()
 HOST_FIREML = "fireml"
 PORT_FIREML = 5000
 CHUNK_SIZE = 1024
+
+LOGGER_NAME = "networking"
+LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 async def image_to_model(client_id: bytes, image) -> str:

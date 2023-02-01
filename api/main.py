@@ -1,4 +1,6 @@
+from enum import Enum
 import json
+import logging
 from typing import List
 from fastapi import FastAPI, File, Request, UploadFile, BackgroundTasks
 from fastapi.responses import JSONResponse
@@ -9,6 +11,23 @@ from networking import image_to_model
 
 app = FastAPI()
 templates = Jinja2Templates(directory="./templates")
+
+class LoggingLevel(Enum):
+    NOTSET = logging.NOTSET
+    DEBUG = logging.DEBUG
+    INFO = logging.INFO
+    WARNING = logging.WARNING
+    ERROR = logging.ERROR
+    CRITICAL = logging.CRITICAL
+
+    @classmethod
+    def get_level(cls, level: str):
+        return cls.__members__.get(level, cls.NOTSET).value
+
+LOGGER_NAME = "main"
+FORMAT = "| %(asctime)s | %(levelname)s | %(name)s | %(message)s |"
+logging.basicConfig(level=logging.INFO, format=FORMAT)
+LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 @app.get('/classify')
