@@ -29,11 +29,12 @@ async def classify_image(background_tasks: BackgroundTasks,
         bytes_image = await image.read()
         result = await image_to_classifier(client_id, bytes_image)
 
+        detect_image = None
         if result == "fire" and dodetect:
             detect_image = await image_to_detection(client_id, bytes_image)
 
         results.append({"filename": image.filename,
-                        "obj_result": None,
+                        "obj_result": detect_image,
                         "prediction": result,
                         "label": json.dumps(result),
                         "coords": coords})

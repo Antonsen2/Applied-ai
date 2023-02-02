@@ -1,5 +1,7 @@
+import io
 import random
-import matplotlib.pyplot as plt
+from PIL import Image
+import matplotlib.pyplot as plt, mpld3
 from matplotlib.patches import Rectangle
 from matplotlib.lines import Line2D
 import matplotlib.colors as mcolors
@@ -10,10 +12,11 @@ LABELS = ('smoke', 'fire')
 
 
 def plot_prediction(img, predictions: tuple) -> None:
+    img = Image.open(io.BytesIO(img))
     patches = []
     colors = list(mcolors.cnames.values())
     _, ax = plt.subplots(figsize=(13,7))
-    #plt.imshow(img)
+    plt.imshow(img)
 
     for box, score, label in zip(predictions[0], predictions[1], predictions[2]):
         box_counter = random.randint(0, len(COLORS))
@@ -53,4 +56,4 @@ def plot_prediction(img, predictions: tuple) -> None:
         handles=patches
     )
 
-    return plt.fig_to_html(plt.gcf())
+    return mpld3.fig_to_html(plt.gcf())
