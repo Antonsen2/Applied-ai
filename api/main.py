@@ -54,6 +54,7 @@ async def classify_image(background_tasks: BackgroundTasks,
 
         # Predict image using model
         prediction = await image_to_model(client_id, bytes_image)
+        label = json.dumps(prediction)
 
         # Save and prepare image path to be able to display on results page
         image_id = str(uuid.uuid1())
@@ -63,10 +64,12 @@ async def classify_image(background_tasks: BackgroundTasks,
         results.append({
             "filename": image.filename,
             "prediction": prediction,
-            "label": json.dumps(prediction),
+            "label": label,
             "coords": coords,
             "image_path": f"/classify/result/image/{image_id}"
         })
+
+        LOGGER.info("Prediction results for %s got label %s", image.filename, label)
 
     background_tasks.add_task(remove_client_id, client_id)
 
@@ -93,11 +96,18 @@ async def api_classify_image(background_tasks: BackgroundTasks,
     for image in images:
         bytes_image = await image.read()
         result = await image_to_model(client_id, bytes_image)
-        prediction.append({"result": result,
-                           "filename": image.filename,
-                           "coords": coords})
+
+        if result:
+            prediction.append({"result": result,
+                               "filename": image.filename,
+                               "coords": coords})
+            LOGGER.info("Successfully predicted %s got result %s", image.filename,
+                json.dumps(result))
+        else:
+            LOGGER.warning("Unable to predict %s got result %s", image.filename, result)
 
     json_prediction = json.dumps(prediction)
 
     background_tasks.add_task(remove_client_id, client_id)
+
     return JSONResponse(content=json_prediction)

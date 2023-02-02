@@ -20,6 +20,8 @@ async def image_to_model(client_id: bytes, image) -> str:
     header_data = AES.encrypt(checksum + b" " + client_id)
     header = header_data + b" " * (CHUNK_SIZE - len(header_data))
 
+    LOGGER.info("Sending client %s image size %s", client_id, checksum)
+
     writer.write(header)
     await writer.drain()
 
@@ -29,5 +31,7 @@ async def image_to_model(client_id: bytes, image) -> str:
 
     response = await reader.read(CHUNK_SIZE)
     checksum, client_id, msg = AES.decrypt(response.strip()).split()
+
+    LOGGER.debug("Received client %s response %s", client_id.decode(), msg.decode())
 
     return msg.decode()
