@@ -83,6 +83,8 @@ document.querySelector("#files").addEventListener("change", (e) => { //CHANGE EV
           const picFile = event.target;
           const div = document.createElement("div");
           div.innerHTML = `<img class="thumbnail" src="${picFile.result}" title="${picFile.name}"/>`;
+          div.firstChild.style.maxWidth = "100%";
+          div.firstChild.style.maxHeight = "200px";
           output.appendChild(div);
         });
         picReader.readAsDataURL(files[i]); //READ THE IMAGE
