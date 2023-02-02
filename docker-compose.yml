@@ -58,13 +58,12 @@ services:
 
   vault-init:
     container_name: vault-init
-    image: "vault:1.12.2"
+    build:
+      context: "./vault"
+      dockerfile: "Dockerfile"
     depends_on:
       - vault
     restart: "no"
     environment:
       VAULT_ADDR: "http://vault:8200"
       VAULT_TOKEN: "${TOKEN}"
-    entrypoint: ['sh', '-c', '/vault-transit-init.sh']
-    volumes:
-      - ./vault/vault-transit-init.sh:/vault-transit-init.sh
