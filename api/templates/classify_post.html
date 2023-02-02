@@ -1,21 +1,52 @@
 <style>
-.fiery-text {
-    color: #ff6600; /* Fiery orange color */
-    font-size: 20px;
-    font-weight: bold;
-    text-align: center; /* Center the text */
-    margin-bottom: 20px;
+body {
+    background-color: black;
+    color: #f6660d;
 }
 
-body {
-    background: black
+.container {
+    width: 100%;
+}
+
+table {
+    margin: auto;
+    width: 75%; /* Adjust as needed */
+    border-collapse: collapse;
+    margin-top: 50px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f6660d;
+    color: white;
+}
+
+th.image {
+    width: 30%;
 }
 </style>
-
-
 <body>
-    <div class="fiery-text">
-        <p>{{label}}</p>
-        <p>Coordinates = {{coords}}</p>
+    <div class="container">
+        <table>
+            <tr>
+                <th class="image">Image</th>
+                <th class="label">Label</th>
+                <th class="coordinates">Coordinates</th>
+            </tr>
+            {% for result in results %}
+            <tr>
+                <td>
+                    <img src="{{ result.image_path }}" alt="{{ result.label }}">
+                </td>
+                <td>{{ result.label }}</td>
+                <td>{{ result.coords }}</td>
+            </tr>
+            {% endfor %}
+        </table>
     </div>
 </body>
