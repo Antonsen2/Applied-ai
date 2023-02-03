@@ -1,15 +1,17 @@
-from enum import Enum
 import json
 import logging
-from typing import List
+import os
 import uuid
-from fastapi import FastAPI, File, HTTPException, Request, Response, UploadFile, BackgroundTasks
-from fastapi.responses import JSONResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-from wildfire_control import generate_client_id, remove_client_id
-from networking import image_to_model
+from enum import Enum
+from typing import List
 
+from fastapi import (BackgroundTasks, FastAPI, File, HTTPException, Request,
+                     Response, UploadFile)
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from networking import image_to_model
+from wildfire_control import generate_client_id, remove_client_id
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="./static"), name="static")
@@ -18,21 +20,9 @@ templates = Jinja2Templates(directory="./templates")
 # to make it possible to render via html img tag.
 image_store = dict()
 
-class LoggingLevel(Enum):
-    NOTSET = logging.NOTSET
-    DEBUG = logging.DEBUG
-    INFO = logging.INFO
-    WARNING = logging.WARNING
-    ERROR = logging.ERROR
-    CRITICAL = logging.CRITICAL
-
-    @classmethod
-    def get_level(cls, level: str):
-        return cls.__members__.get(level, cls.NOTSET).value
-
 LOGGER_NAME = "main"
 FORMAT = "| %(asctime)s | %(levelname)s | %(name)s | %(message)s |"
-logging.basicConfig(level=logging.INFO, format=FORMAT)
+logging.basicConfig(level=logging.getLevelName(os.getenv('LOG_LEVEL', 'INFO').upper()), format=FORMAT)
 LOGGER = logging.getLogger(LOGGER_NAME)
 
 
@@ -69,7 +59,8 @@ async def classify_image(background_tasks: BackgroundTasks,
             "image_path": f"/classify/result/image/{image_id}"
         })
 
-        LOGGER.info("Prediction results for %s got label %s", image.filename, label)
+        LOGGER.info("Prediction results for client %s and image %s got label %s",
+            client_id.decode(), image.filename, label)
 
     background_tasks.add_task(remove_client_id, client_id)
 
@@ -101,10 +92,11 @@ async def api_classify_image(background_tasks: BackgroundTasks,
             prediction.append({"result": result,
                                "filename": image.filename,
                                "coords": coords})
-            LOGGER.info("Successfully predicted %s got result %s", image.filename,
-                json.dumps(result))
+            LOGGER.info("Client %s got result %s for image %s",
+                client_id.decode(), json.dumps(result), image.filename)
         else:
-            LOGGER.warning("Unable to predict %s got result %s", image.filename, result)
+            LOGGER.warning("Client %s was unable to predict image %s got result %s",
+                client_id.decode(), image.filename, result)
 
     json_prediction = json.dumps(prediction)
 

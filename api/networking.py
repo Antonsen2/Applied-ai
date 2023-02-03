@@ -1,7 +1,7 @@
 import asyncio
 import logging
-from aescipher import AESCipher
 
+from aescipher import AESCipher
 
 AES = AESCipher()
 HOST_FIREML = "fireml"
@@ -20,7 +20,7 @@ async def image_to_model(client_id: bytes, image) -> str:
     header_data = AES.encrypt(checksum + b" " + client_id)
     header = header_data + b" " * (CHUNK_SIZE - len(header_data))
 
-    LOGGER.info("Sending client %s image size %s", client_id, checksum)
+    LOGGER.info("Sending for client %s image size %s", client_id.decode(), checksum.decode())
 
     writer.write(header)
     await writer.drain()
@@ -32,6 +32,6 @@ async def image_to_model(client_id: bytes, image) -> str:
     response = await reader.read(CHUNK_SIZE)
     checksum, client_id, msg = AES.decrypt(response.strip()).split()
 
-    LOGGER.debug("Received client %s response %s", client_id.decode(), msg.decode())
+    LOGGER.debug("Received for client %s response %s", client_id.decode(), msg.decode())
 
     return msg.decode()
