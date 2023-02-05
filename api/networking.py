@@ -1,11 +1,13 @@
+import os
+import logging
 import asyncio
+from fastapi import HTTPException
 from aescipher import AESCipher
 
 
 AES = AESCipher()
 HOST_FIREML = "fireml"
 PORT_FIREML = 5000
-CHUNK_SIZE = 1024
 
 
 async def image_to_model(client_id: bytes, image) -> str:
@@ -13,17 +15,26 @@ async def image_to_model(client_id: bytes, image) -> str:
 
     # image header data
     checksum = f"{len(image)}".encode()
-    header_data = AES.encrypt(checksum + b" " + client_id)
-    header = header_data + b" " * (CHUNK_SIZE - len(header_data))
+    header = AES.encrypt(checksum + b" " + client_id) + b"\n"
 
     writer.write(header)
     await writer.drain()
 
-    writer.write(AES.encrypt(image))
+    writer.write(AES.encrypt(image) + b"\n")
     await writer.drain()
-    writer.write_eof()
 
-    response = await reader.read(CHUNK_SIZE)
+    response = await reader.readline()
     checksum, client_id, msg = AES.decrypt(response.strip()).split()
+
+    if msg == b"incomplete":
+        # Failed to upload file to FireClassifier, Attempt two file transfer
+        writer.write(AES.encrypt(image) + b"\n")
+        await writer.drain()
+
+        response = await reader.readline()
+        checksum, client_id, msg = AES.decrypt(response.strip()).split()
+
+        if msg == b"unsuccessful":
+            raise HTTPException(status_code=500, detail="unsuccessful file transfer")
 
     return msg.decode()
