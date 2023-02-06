@@ -44,6 +44,10 @@ background-color: black;
 .image-p {
   margin-right: 180px;
 }
+
+.dodetect {
+    color: #ffffff;
+}
 </style>
 <body>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -62,6 +66,8 @@ background-color: black;
         <form id="upload-form" method="post" enctype="multipart/form-data">
             <input id="files" type="file" name="images" multiple="multiple" accept="image/jpeg, image/png, image/jpg">
             <input type="text" id="coords" name="coords">
+            <input type="checkbox" id="dodetect" name="dodetect" value="True">
+            <label for="dodetect">Fire Object Detection</label>
             <input type="submit" value="Upload">
             <output id="result">
         </form>

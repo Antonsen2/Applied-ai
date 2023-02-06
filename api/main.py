@@ -1,10 +1,10 @@
 import json
 from typing import List
-from fastapi import FastAPI, File, Request, UploadFile, BackgroundTasks
+from fastapi import FastAPI, File, Request, UploadFile, BackgroundTasks, Form
 from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from wildfire_control import generate_client_id, remove_client_id
-from networking import image_to_model
+from networking import image_to_classifier, image_to_detection
 
 
 app = FastAPI()
@@ -20,19 +20,24 @@ async def read_html(request: Request):
 async def classify_image(background_tasks: BackgroundTasks,
                          request: Request,
                          images: List[UploadFile] = File(...),
-                         coords: List = None):
+                         coords: List = None,
+                         dodetect: bool = Form(False)):
     client_id = generate_client_id()
 
     results = []
     for image in images:
         bytes_image = await image.read()
-        result = await image_to_model(client_id, bytes_image)
-        results.append({
-            "filename": image.filename,
-            "obj_result": None,
-            "prediction": result,
-            "label": json.dumps(result),
-            "coords": coords, })
+        result = await image_to_classifier(client_id, bytes_image)
+
+        detect_image = None
+        if result == "fire" and dodetect:
+            detect_image = await image_to_detection(client_id, bytes_image)
+
+        results.append({"filename": image.filename,
+                        "obj_result": detect_image,
+                        "prediction": result,
+                        "label": json.dumps(result),
+                        "coords": coords})
 
     json_prediction = json.dumps(results)
 
@@ -42,7 +47,7 @@ async def classify_image(background_tasks: BackgroundTasks,
                                       "request": request,
                                       "label": json_prediction,
                                       "image": images,
-                                      "results": results
+                                      "results": results,
                                       "coords": coords})
 
 
@@ -55,7 +60,7 @@ async def api_classify_image(background_tasks: BackgroundTasks,
     prediction = []
     for image in images:
         bytes_image = await image.read()
-        result = await image_to_model(client_id, bytes_image)
+        result = await image_to_classifier(client_id, bytes_image)
         prediction.append({"result": result,
                            "filename": image.filename,
                            "coords": coords})
