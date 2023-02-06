@@ -73,7 +73,7 @@ async def handler(reader: asyncio.StreamReader,
     # use model
     LOGGER.debug("client %s starting image prediction", client_id)
     fire_prediction = model_predict(image)
-    LOGGER.info("client %s image prediction %s", client_id, fire_prediction)
+    LOGGER.info("client %s image object detection prediction finished", client_id)
 
     # SEND prediction header
     response = await package_response(client_id, "success")

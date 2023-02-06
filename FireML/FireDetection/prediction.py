@@ -26,7 +26,7 @@ def load_model(model_path):
 
 MODEL_PATH = "model/model.pt"
 LABELS = ('smoke', 'fire')
-THRESHOLD = 0.80
+THRESHOLD = 0.70
 MODEL = load_model(MODEL_PATH)
 
 
