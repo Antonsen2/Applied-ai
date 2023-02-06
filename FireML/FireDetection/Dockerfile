@@ -18,4 +18,6 @@ USER wildfire
 WORKDIR /home/wildfire/
 COPY --chown=wildfire:ai . .
 
+RUN python premodel.py
+
 CMD ["python", "main.py"]
