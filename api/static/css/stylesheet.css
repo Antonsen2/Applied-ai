@@ -1,4 +1,85 @@
+body {
+    margin: 0;
+    color: #fff;
+    font-family: sans-serif;
+    background: #0e0e0e;
+}
+
+main {
+    margin-top: 100px;
+}
+
+.container {
+    margin: 5px;
+}
+
+.center {
+    text-align: center;
+}
+
+/* Top bar menu */
+.navsection {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    height: 100px;
+    width: 100%;
+    background: #111;
+    display:inline-block;
+}
+
+.navsection a {
+    font-size: 50px;
+    color: #fff;
+}
+
+.navsection ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    text-align: center;
+}
+
+.navsection ul li {
+    position: relative;
+    margin: 0 20px 0 0;
+    display: inline-block;
+}
+
+.navsection ul li a {
+    padding: 20px;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.navsection ul li a:hover {
+    opacity: 0.5;
+}
+
+.navsection ul li ul {
+    display: none;
+    position: absolute;
+    left: 0;
+    background: #111;
+    float: left;
+}
+
+.navsection ul li ul li {
+    width:100%;
+}
+
+.navsection ul li:hover ul {
+    display:block;
+}
+
+#welcome-to-wildfire h1 {
+    padding-top: 25px;
+    text-align: center;
+    font-size: 50px;
+}
+
 input[type="submit"] {
-  background-color:#ff6600;
-  color: white;
+    background-color:#ff6600;
+    color: white;
 }
