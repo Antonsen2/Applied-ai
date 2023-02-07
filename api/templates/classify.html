@@ -1,69 +1,11 @@
-<style>
-.fiery-text {
-  color: #ff6600; /* Fiery orange color */
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center; /* Center the text */
-  margin-bottom: 20px;
-}
-
-.fiery-instruction {
-  color: #ff6600; /* Fiery orange color */
-  font-size: 10px;
-  font-weight: bold;
-  text-align: center; /* Center the text */
-  margin-bottom: 20px;
-}
-
-#form-container {
-  display: flex;
-  justify-content: center;
-}
-
-#files {
-  background-color: #ff6600;
-  color: white;
-}
-
-input[type="submit"] {
-  background-color:#ff6600;
-  color: white;
-}
-
-body {
-background-color: black;
-
-}
-
-.fiery-p {
-  color: #ff6600;
-  justify-content: center;
-  display: flex;
-}
-
-.image-p {
-  margin-right: 180px;
-}
-
-.dodetect {
-    color: #ffffff;
-}
-</style>
-<body>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <div class="fiery-text">
-        Choose the images you want the model to predict on
-    </div>
-    <div class="fiery-text">
-        CTR + click to select several images
-    </div>
-    <div class="fiery-p">
-        <p class="image-p">Images</p>
-        <p>Coordinates</p>
-    </div>
-
+{% extends "base.html" %}
+{% block title %}Classify{% endblock %}
+{% block content %}
+    <h2>Image predictions</h2>
+    <p>Choose the images you want the model to predict on</p>
+    <p class="note">CTR + click to select several images</p>
     <div id='form-container'>
-        <form id="upload-form" method="post" enctype="multipart/form-data">
+        <form id="upload-form" method="POST" enctype="multipart/form-data">
             <input id="files" type="file" name="images" multiple="multiple" accept="image/jpeg, image/png, image/jpg">
             <input type="text" id="coords" name="coords">
             <input type="checkbox" id="dodetect" name="dodetect" value="True">
@@ -72,26 +14,5 @@ background-color: black;
             <output id="result">
         </form>
     </div>
-    <script>
-    document.querySelector("#files").addEventListener("change", (e) => { //CHANGE EVENT FOR UPLOADING PHOTOS
-      if (window.File && window.FileReader && window.FileList && window.Blob) { //CHECK IF FILE API IS SUPPORTED
-        const files = e.target.files; //FILE LIST OBJECT CONTAINING UPLOADED FILES
-        const output = document.querySelector("#result");
-        output.innerHTML = "";
-        for (let i = 0; i < files.length; i++) { // LOOP THROUGH THE FILE LIST OBJECT
-            if (!files[i].type.match("image")) continue; // ONLY PHOTOS (SKIP CURRENT ITERATION IF NOT A PHOTO)
-            const picReader = new FileReader(); // RETRIEVE DATA URI
-            picReader.addEventListener("load", function (event) { // LOAD EVENT FOR DISPLAYING PHOTOS
-              const picFile = event.target;
-              const div = document.createElement("div");
-              div.innerHTML = `<img class="thumbnail" src="${picFile.result}" title="${picFile.name}"/>`;
-              output.appendChild(div);
-            });
-            picReader.readAsDataURL(files[i]); //READ THE IMAGE
-        }
-      } else {
-        alert("Your browser does not support File API");
-      }
-    });
-    </script>
-</body>
+    <script src="{{ url_for('static', path='/js/images.js') }}" ></script>
+{% endblock %}

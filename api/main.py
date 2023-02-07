@@ -1,14 +1,25 @@
 import json
 from typing import List
 from fastapi import FastAPI, File, Request, UploadFile, BackgroundTasks, Form
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from wildfire_control import generate_client_id, remove_client_id
 from networking import image_to_classifier, image_to_detection
 
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="./static"), name="static")
 templates = Jinja2Templates(directory="./templates")
+
+
+@app.get("/")
+def home():
+    return RedirectResponse("/home")
+
+@app.get('/home')
+async def read_html(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request})
 
 
 @app.get('/classify')
@@ -27,16 +38,16 @@ async def classify_image(background_tasks: BackgroundTasks,
     results = []
     for image in images:
         bytes_image = await image.read()
-        result = await image_to_classifier(client_id, bytes_image)
+        prediction = await image_to_classifier(client_id, bytes_image)
 
         detect_image = None
-        if result == "fire" and dodetect:
+        if prediction == "fire" and dodetect:
             detect_image = await image_to_detection(client_id, bytes_image)
 
         results.append({"filename": image.filename,
                         "obj_result": detect_image,
-                        "prediction": result,
-                        "label": json.dumps(result),
+                        "prediction": prediction,
+                        "label": json.dumps(prediction),
                         "coords": coords})
 
     json_prediction = json.dumps(results)
