@@ -1,16 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Classify{% endblock %}
 {% block content %}
-    <h2>Image predictions</h2>
+    <h2 id="image-predictions">Image predictions</h2>
     <p>Choose the images you want the model to predict on</p>
     <p class="note">CTR + click to select several images</p>
     <div id='form-container'>
         <form id="upload-form" method="POST" enctype="multipart/form-data">
             <input id="files" type="file" name="images" multiple="multiple" accept="image/jpeg, image/png, image/jpg">
-            <input type="text" id="coords" name="coords">
-            <input type="checkbox" id="dodetect" name="dodetect" value="True">
-            <label for="dodetect">Fire Object Detection</label>
-            <input type="submit" value="Upload">
+            <label for="coords">Coordinates
+                <input type="text" id="coords" name="coords">
+            </label>
+            <label for="dodetect">Fire Object Detection
+                <input type="checkbox" id="dodetect" name="dodetect" value="True">
+            </label>
+            <input type="submit" class="green_badass_button" value="Upload">
             <output id="result">
         </form>
     </div>
