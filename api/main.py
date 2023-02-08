@@ -18,13 +18,15 @@ templates = Jinja2Templates(directory="./templates")
 
 LOGGER_NAME = "main"
 FORMAT = "| %(asctime)s | %(levelname)s | %(name)s | %(message)s |"
-logging.basicConfig(level=logging.getLevelName(os.getenv('LOG_LEVEL', 'INFO').upper()), format=FORMAT)
+LOG_LEVEL = logging.getLevelName(os.getenv('LOG_LEVEL', 'INFO').upper())
+logging.basicConfig(level=LOG_LEVEL, format=FORMAT)
 LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 @app.get("/")
 def home():
     return RedirectResponse("/home")
+
 
 @app.get('/home')
 async def read_html(request: Request):
@@ -58,7 +60,10 @@ async def classify_image(background_tasks: BackgroundTasks,
         if prediction == "fire" and dodetect:
             detect_image = await image_to_detection(client_id, bytes_image)
 
-        prediction = "Fire detected" if prediction == "fire" else "No fire detected"
+        if prediction == "fire":
+            prediction = "Fire detected"
+        else:
+            prediction = "No fire detected"
 
         results.append({"filename": image.filename,
                         "filetype": image.content_type,

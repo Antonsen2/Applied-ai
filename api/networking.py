@@ -58,7 +58,8 @@ async def image_to_classifier(client_id: bytes, image) -> str:
             LOGGER.info("Client %s unsuccessful upload file to FireClassifier",
                         client_id.decode("utf-8"))
 
-            raise HTTPException(status_code=500, detail="unsuccessful file transfer")
+            raise HTTPException(status_code=500,
+                                detail="unsuccessful file transfer")
 
         LOGGER.debug("Client %s attempt two to FireClassifier successful",
                      client_id.decode("utf-8"))
@@ -79,7 +80,7 @@ async def image_to_detection(client_id: bytes, image):
     LOGGER.info("Client %s sending image size %s to FireDetection",
                 client_id.decode("utf-8"), checksum.decode("utf-8"))
 
-    writer.write(header+ b"\n")
+    writer.write(header + b"\n")
     await writer.drain()
 
     writer.write(AES.encrypt(image) + b"\n")

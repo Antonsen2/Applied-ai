@@ -15,10 +15,11 @@ def plot_prediction(img, predictions: tuple) -> None:
     img = Image.open(io.BytesIO(img))
     patches = []
     colors = list(mcolors.cnames.values())
-    _, ax = plt.subplots(figsize=(5,5))
+    _, ax = plt.subplots(figsize=(5, 5))
     plt.imshow(img)
 
-    for box, score, label in zip(predictions[0], predictions[1], predictions[2]):
+    predictions_zip = zip(predictions[0], predictions[1], predictions[2])
+    for box, score, label in predictions_zip:
         box_counter = random.randint(0, len(COLORS))
         score *= 100
         label = f'{str(LABELS[label-1])} : {score: .2f}%'
