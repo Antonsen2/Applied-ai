@@ -46,7 +46,8 @@ def get_relevant_scores(boxes: list, scores: list, labels: list) -> tuple:
 
 def model_predict(image):
     preds = MODEL(image)
-    outputs = [{k: v.to(torch.device('cpu')) for k, v in target.items()} for target in preds]
+    outputs = [{k: v.to(torch.device('cpu')) for k, v in target.items()}
+               for target in preds]
 
     boxes = outputs[0]['boxes'].data.cpu().numpy().astype(np.int32)
     scores = outputs[0]['scores'].data.cpu().numpy()

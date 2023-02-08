@@ -50,8 +50,8 @@ async def handler(reader: asyncio.StreamReader,
 
         file = await recv_file(reader)
 
-        LOGGER.debug("client %s image received, expected: %d; got: %d", client_id,
-                     checksum, len(file))
+        LOGGER.debug("client %s image received, expected: %d; got: %d",
+                     client_id, checksum, len(file))
 
         if checksum != len(file):
             # FAILED transferring again, action close communication
@@ -73,7 +73,8 @@ async def handler(reader: asyncio.StreamReader,
     # use model
     LOGGER.debug("client %s starting image prediction", client_id)
     fire_prediction = model_predict(image)
-    LOGGER.info("client %s finsihed image prediction %s", client_id, fire_prediction)
+    LOGGER.info("client %s finsihed image prediction %s", client_id,
+                fire_prediction)
 
     # send back prediction
     response = await package_response(client_id, fire_prediction)
@@ -100,7 +101,8 @@ async def package_response(client_id: str, msg: str) -> bytes:
     checksum = f"{len(msg)}".encode("utf-8")
     msg = checksum + b" " + msg
 
-    LOGGER.debug("client %s sending response %s", client_id.decode(), msg.decode())
+    LOGGER.debug("client %s sending response %s", client_id.decode(),
+                 msg.decode())
 
     response = AES.encrypt(msg)
     return response + b"\n"

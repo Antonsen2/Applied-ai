@@ -73,7 +73,8 @@ async def handler(reader: asyncio.StreamReader,
     # use model
     LOGGER.debug("client %s starting image prediction", client_id)
     fire_prediction = model_predict(image)
-    LOGGER.info("client %s image object detection prediction finished", client_id)
+    LOGGER.info("client %s image object detection prediction finished",
+                client_id)
 
     # SEND prediction header
     response = await package_response(client_id, "success")
@@ -100,7 +101,7 @@ async def recv_file(reader: asyncio.StreamReader) -> bytes:
     return file
 
 
-async def package_response(client_id: str, msg:str) -> bytes:
+async def package_response(client_id: str, msg: str) -> bytes:
     client_id, msg = client_id.encode("utf-8"), msg.encode("utf-8")
     msg = client_id + b" " + msg
     checksum = f"{len(msg)}".encode("utf-8")
