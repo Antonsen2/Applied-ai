@@ -1,17 +1,28 @@
 import json
+import logging
+import os
+import uuid
+from enum import Enum
 from typing import List
 from base64 import b64encode
-from fastapi import FastAPI, File, Request, UploadFile, BackgroundTasks, Form
+from fastapi import FastAPI, BackgroundTasks, File, Request, UploadFile, Form
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from wildfire_control import generate_client_id, remove_client_id
 from networking import image_to_classifier, image_to_detection
 
-
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="./static"), name="static")
 templates = Jinja2Templates(directory="./templates")
+# Initialize images store that persists user uploaded images
+# to make it possible to render via html img tag.
+image_store = dict()
+
+LOGGER_NAME = "main"
+FORMAT = "| %(asctime)s | %(levelname)s | %(name)s | %(message)s |"
+logging.basicConfig(level=logging.getLevelName(os.getenv('LOG_LEVEL', 'INFO').upper()), format=FORMAT)
+LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 @app.get("/")
@@ -80,4 +91,5 @@ async def api_classify_image(background_tasks: BackgroundTasks,
     json_prediction = json.dumps(prediction)
 
     background_tasks.add_task(remove_client_id, client_id)
+
     return JSONResponse(content=json_prediction)

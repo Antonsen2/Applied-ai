@@ -1,11 +1,11 @@
 import asyncio
 import pickle
+import logging
 from fastapi import HTTPException
 from aescipher import AESCipher
 from plotprediction import plot_prediction
 
 
-CHUNK_SIZE = 1024
 HOST_FIREML_CLASSIFIER = "fireclassifier"
 PORT_FIREML_CLASSIFIER = 5000
 
@@ -14,6 +14,9 @@ PORT_FIREML_DETECTION = 5001
 
 AES = AESCipher()
 
+LOGGER_NAME = "networking"
+LOGGER = logging.getLogger(LOGGER_NAME)
+
 
 async def image_to_classifier(client_id: bytes, image) -> str:
     reader, writer = await asyncio.open_connection(HOST_FIREML_CLASSIFIER,
@@ -21,18 +24,42 @@ async def image_to_classifier(client_id: bytes, image) -> str:
 
     # image header data
     checksum = f"{len(image)}".encode()
-    header_data = AES.encrypt(checksum + b" " + client_id)
-    header = header_data + b" " * (CHUNK_SIZE - len(header_data))
+    header = AES.encrypt(checksum + b" " + client_id) + b"\n"
+
+    LOGGER.info("Sending for client %s image size %s", client_id.decode(),
+                checksum.decode())
 
     writer.write(header)
     await writer.drain()
 
-    writer.write(AES.encrypt(image))
+    writer.write(AES.encrypt(image) + b"\n")
     await writer.drain()
-    writer.write_eof()
 
-    response = await reader.read(CHUNK_SIZE)
+    response = await reader.readline()
     checksum, client_id, msg = AES.decrypt(response.strip()).split()
+
+    if msg == b"incomplete":
+        # Failed to upload file to FireClassifier, Attempt two file transfer
+        LOGGER.info("Client %s failed to upload file to FireClassifier",
+                    client_id.decode())
+
+        LOGGER.debug("Client %s starting attempt two", client_id.decode())
+
+        writer.write(AES.encrypt(image) + b"\n")
+        await writer.drain()
+
+        response = await reader.readline()
+        checksum, client_id, msg = AES.decrypt(response.strip()).split()
+
+        if msg == b"unsuccessful":
+            LOGGER.debug("Client %s attempt two failed", client_id.decode())
+            LOGGER.info("Client %s unsuccessful upload file to FireClassifier",
+                        client_id.decode())
+            raise HTTPException(status_code=500, detail="unsuccessful file transfer")
+
+        LOGGER.debug("Client %s attempt two successful", client_id.decode())
+
+    LOGGER.info("Client %s received prediction %s", client_id.decode(), msg.decode())
 
     return msg.decode()
 
