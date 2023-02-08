@@ -2,15 +2,16 @@ import json
 import logging
 import os
 import uuid
+from base64 import b64encode
 from enum import Enum
 from typing import List
-from base64 import b64encode
-from fastapi import FastAPI, BackgroundTasks, File, Request, UploadFile, Form
+
+from fastapi import BackgroundTasks, FastAPI, File, Form, Request, UploadFile
 from fastapi.responses import JSONResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-from wildfire_control import generate_client_id, remove_client_id
+from fastapi.templating import Jinja2Templates
 from networking import image_to_classifier, image_to_detection
+from wildfire_control import generate_client_id, remove_client_id
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="./static"), name="static")

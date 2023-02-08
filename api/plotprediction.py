@@ -1,11 +1,12 @@
 import io
 import random
-from PIL import Image
-import matplotlib.pyplot as plt, mpld3
-from matplotlib.patches import Rectangle
-from matplotlib.lines import Line2D
-import matplotlib.colors as mcolors
 
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
+import mpld3
+from matplotlib.lines import Line2D
+from matplotlib.patches import Rectangle
+from PIL import Image
 
 COLORS = list(mcolors.cnames.values())
 LABELS = ('smoke', 'fire')
