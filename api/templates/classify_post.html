@@ -1,19 +1,21 @@
 {% extends "base.html" %}
 {% block title %}Classify{% endblock %}
 {% block content %}
-    <h2 class="medium_font_size">Fire result</h2>
-    {% if coords %}
-        <p>Coordinates {{coords}}</p>
-    {% endif %}
 
+  <h2 class="medium_font_size" style="text-align: center; margin-top: 150px;">Fire Result</h2>
+  {% if coords %}
+    <p style="text-align: center;">Coordinates {{coords}}</p>
+  {% endif %}
+  <div class="results" style="display: flex; justify-content: center; align-items: center;">
     {% for result in results %}
-        <div class="results">
-            <h3 class="small_font_size">{{ result.prediction }}</h3>
-            {% if result.obj_result %}
-                {{ result.obj_result | safe }}
-            {% else %}
-                <img src="data:{{ result.filetype }};base64,{{ result.image | safe }}" style="margin-left: 50px;">
-            {% endif %}
-        </div>
+      <div class="results-container" style="display: flex; flex-direction: column; align-items: center; margin: 20px;">
+        <h3 class="result-title" style="text-align: center; margin-bottom: 20px;">{{ result.prediction }}</h3>
+        {% if result.obj_result %}
+          {{ result.obj_result | safe }}
+        {% else %}
+          <img src="data:{{ result.filetype }};base64,{{ result.image | safe }}" alt="{{ result.prediction }}" style="display: block; margin: 0 auto;">
+        {% endif %}
+      </div>
     {% endfor %}
+  </div>
 {% endblock %}
