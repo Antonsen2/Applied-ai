@@ -15,9 +15,6 @@ from networking import image_to_classifier, image_to_detection
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="./static"), name="static")
 templates = Jinja2Templates(directory="./templates")
-# Initialize images store that persists user uploaded images
-# to make it possible to render via html img tag.
-image_store = dict()
 
 LOGGER_NAME = "main"
 FORMAT = "| %(asctime)s | %(levelname)s | %(name)s | %(message)s |"
@@ -47,6 +44,9 @@ async def classify_image(background_tasks: BackgroundTasks,
                          dodetect: bool = Form(False)):
     client_id = generate_client_id()
 
+    LOGGER.info("New Client %s created to classify image",
+                client_id.decode("utf-8"))
+
     coords = coords[0] if len(coords[0]) > 0 else None
 
     results = []
@@ -68,6 +68,8 @@ async def classify_image(background_tasks: BackgroundTasks,
 
     background_tasks.add_task(remove_client_id, client_id)
 
+    LOGGER.info("Client %s finsihed classify image", client_id.decode("utf-8"))
+
     return templates.TemplateResponse("classify_post.html", {
                                       "request": request,
                                       "results": results,
@@ -80,6 +82,9 @@ async def api_classify_image(background_tasks: BackgroundTasks,
                              coords: List = None):
     client_id = generate_client_id()
 
+    LOGGER.info("New Client %s created to api classify image",
+                client_id.decode("utf-8"))
+
     prediction = []
     for image in images:
         bytes_image = await image.read()
@@ -88,8 +93,12 @@ async def api_classify_image(background_tasks: BackgroundTasks,
                            "filename": image.filename,
                            "coords": coords})
 
+    # TODO test with dict instead
     json_prediction = json.dumps(prediction)
 
     background_tasks.add_task(remove_client_id, client_id)
+
+    LOGGER.info("Client %s finsihed api classify image",
+                client_id.decode("utf-8"))
 
     return JSONResponse(content=json_prediction)
