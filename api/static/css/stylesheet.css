@@ -73,14 +73,27 @@ main {
     display:block;
 }
 
+/* Random specific classes */
+.label_right_10 label {
+    margin-right: 10px;
+}
+
+.medium_font_size {
+    font-size: 45px;
+}
+
+.small_font_size {
+    font-size: 25px;
+}
+
+.results {
+    margin-left: 10px;
+}
+
 #welcome-to-wildfire h1 {
     padding-top: 25px;
     text-align: center;
     font-size: 50px;
-}
-
-.label_right_10 label {
-    margin-right: 10px;
 }
 
 /* Start Badass Green Button */

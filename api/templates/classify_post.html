@@ -1,11 +1,19 @@
 {% extends "base.html" %}
 {% block title %}Classify{% endblock %}
 {% block content %}
-    <div>
-      <p>Coordinates = {{coords}}</p>
-      {% for result in results %}
-        <p>{{result.prediction}}</p>
-        {{ result.obj_result|safe }}
-      {% endfor %}
-    </div>
+    <h2 class="medium_font_size">Fire result</h2>
+    {% if coords %}
+        <p>Coordinates {{coords}}</p>
+    {% endif %}
+
+    {% for result in results %}
+        <div class="results">
+            <h3 class="small_font_size">{{ result.prediction }}</h3>
+            {% if result.obj_result %}
+                {{ result.obj_result | safe }}
+            {% else %}
+                <img src="data:{{ result.filetype }};base64,{{ result.image | safe }}" style="margin-left: 50px;">
+            {% endif %}
+        </div>
+    {% endfor %}
 {% endblock %}

@@ -1,5 +1,6 @@
 import json
 from typing import List
+from base64 import b64encode
 from fastapi import FastAPI, File, Request, UploadFile, BackgroundTasks, Form
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -35,6 +36,8 @@ async def classify_image(background_tasks: BackgroundTasks,
                          dodetect: bool = Form(False)):
     client_id = generate_client_id()
 
+    coords = coords[0] if len(coords[0]) > 0 else None
+
     results = []
     for image in images:
         bytes_image = await image.read()
@@ -44,20 +47,18 @@ async def classify_image(background_tasks: BackgroundTasks,
         if prediction == "fire" and dodetect:
             detect_image = await image_to_detection(client_id, bytes_image)
 
+        prediction = "Fire detected" if prediction == "fire" else "No fire detected"
+
         results.append({"filename": image.filename,
+                        "filetype": image.content_type,
                         "obj_result": detect_image,
                         "prediction": prediction,
-                        "label": json.dumps(prediction),
-                        "coords": coords})
-
-    json_prediction = json.dumps(results)
+                        "image": b64encode(bytes_image).decode("utf-8")})
 
     background_tasks.add_task(remove_client_id, client_id)
 
     return templates.TemplateResponse("classify_post.html", {
                                       "request": request,
-                                      "label": json_prediction,
-                                      "image": images,
                                       "results": results,
                                       "coords": coords})
 

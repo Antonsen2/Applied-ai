@@ -15,7 +15,7 @@ def plot_prediction(img, predictions: tuple) -> None:
     img = Image.open(io.BytesIO(img))
     patches = []
     colors = list(mcolors.cnames.values())
-    _, ax = plt.subplots(figsize=(13,7))
+    _, ax = plt.subplots(figsize=(5,5))
     plt.imshow(img)
 
     for box, score, label in zip(predictions[0], predictions[1], predictions[2]):
