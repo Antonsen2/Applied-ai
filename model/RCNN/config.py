@@ -9,7 +9,7 @@ from albumentations.pytorch.transforms import ToTensorV2
 
 DEVICE = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-SAVE_PATH = '../outputs/models/'  # Path to saved models
+SAVE_PATH = '../models/'  # Path to saved models
 MODEL_NAME = 'new_model.pt'  # Model name (.pt suffix)
 
 TRAIN_DF = pd.read_csv('')  # Path to train_annotations.csv
