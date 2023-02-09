@@ -1,45 +1,47 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-    <h1 id="welcome-to-wildfire">Welcome to Wildfire AI
-        <img src="{{ url_for('static', path='/img/forestfire.png') }}"width="45" height="45">
-    </h1>
-    <introduction>Wildfire ai is a api interface for detecting forest wildfires.
-    The problem with wildfires is that they can spring up when you aren't looking.<br>
-    This a concern for us, and our solution is to create this platform for feeding
-    images and videos to our machine learning models.<br>
-    These machine learning models will detect and monitor for any wildfire.
-    If any are detected a intelligent system of alerts<br>
-    can be setup on this platform to alert the wanted authority and concerned individuals.
-    </introduction>
-    <summary>
-        <h2>Sound-bite</h2>
-        <p>Wildfire ai detects and monitors for forest wildfire and takes
-        action to alert the concerened parties.</p>
-    </summary>
-    <article>
-        <h2>Wildfire story</h2>
-        <h3>Our goal</h3>
-        <p>Our goal is a platform that solve the problem for human monitoring of wildfires.
-        We will do this by take developing a intelligent and<br>optimized system architecture
-        both with machine learning fire detection and also with alerting.<br>
-        We're also inteding to in the future to bring the features.
-        <ul>
-            <li>Video monitoring</li>
-            <li>Video streaming</li>
-            <li>Alerting integration</li>
-        </ul>
-        </p>
-        <h2>Developers
-            <img src="{{ url_for('static', path='/img/developers.png') }}"width="35" height="35">
-        </h2>
+
+<div style="display:flex;justify-content:center;align-items:center;height:100%">
+    <div style="text-align:center">
+        <h1 id="welcome-to-wildfire">Welcome to Wildfire AI
+            <img src="{{ url_for('static', path='/img/forestfire.png') }}"width="45" height="45">
+        </h1>
+        <introduction>Wildfire AI is an API interface for detecting forest wildfires.
+        Wildfires can be unpredictable, which is a major concern for motitoring.<br>
+        Our solution is to create a platform that feeds images and videos to our machine learning models.<br>
+        These models will detect and monitor for any signs of a wildfire.<br>
+        If a wildfire is detected, an intelligent alert system can be set up to notify the relevant authorities and individuals.
+        </introduction>
+        <summary>
+            <h2>Sound-bite</h2>
+            <p>Wildfire AI detects and monitors forest wildfires, taking action to alert concerned parties.</p>
+        </summary>
+        <article>
+            <h2>Wildfire story</h2>
+            <h3>Our goal</h3>
+            <p>Our goal is to create a platform that solves the problem of manual monitoring for wildfires.<br>
+                We aim to develop an intelligent and optimized system architecture that combines machine learning<br>
+                for fire detection and an effective alert system.<br>
+                In the future, we also plan to introduce additional features as followed: <br>
             <ul>
-                <li>Albin Thorsson, aka <b>meDracula</b></li>
-                <li>Markus Antonsen, aka <b>Antonsen2</b></li>
-                <li>Alicia Toom, aka <b>Alicia-Toom</b></li>
-                <li>Andreas Eliasson, aka <b>AndreasEliasson91</b></li>
-                <li>Mattias Barth, aka <b>mattiasbarth</b></li>
+                <li>Video monitoring</li>
+                <li>Video streaming</li>
+                <li>Alerting integration</li>
             </ul>
-            <p>We are a <a href="https://github.com/Antonsen2/wildfire-ai">open source project</a></p>
-    </article>
+            </p>
+            <h2>Developers
+                <img src="{{ url_for('static', path='/img/developers.png') }}"width="35" height="35">
+            </h2>
+                <ul>
+                    <li>Albin Thorsson, aka <b>meDracula</b></li>
+                    <li>Markus Antonsen, aka <b>Antonsen2</b></li>
+                    <li>Alicia Toom, aka <b>Alicia-Toom</b></li>
+                    <li>Andreas Eliasson, aka <b>AndreasEliasson91</b></li>
+                    <li>Mattias Barth, aka <b>mattiasbarth</b></li>
+                </ul>
+                <p>We are a <a href="https://github.com/Antonsen2/wildfire-ai">open source project</a></p>
+        </article>
+    </div>
+</div>
 {% endblock %}
