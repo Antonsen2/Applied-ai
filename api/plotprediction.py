@@ -1,7 +1,7 @@
 import io
 import random
 from PIL import Image
-import matplotlib.pyplot as plt, mpld3  # nopep8: E401
+import matplotlib.pyplot as plt, mpld3
 from matplotlib.patches import Rectangle
 from matplotlib.lines import Line2D
 import matplotlib.colors as mcolors
