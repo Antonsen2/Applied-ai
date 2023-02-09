@@ -1,3 +1,9 @@
+"""Downloader downloads the pretrained model resnet50 from pytorch
+
+    This function is used in the docker build step to
+    avoid downloading every for deployment and instead
+    is part of the image.
+"""
 from torch import hub
 
 

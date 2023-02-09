@@ -11,6 +11,7 @@ MODEL = keras.models.load_model(MODEL_PATH)
 
 
 def preprocess_image(data):
+    """Prepare image to be used by model_predict function"""
     image = Image.open(io.BytesIO(data))
     image = image.resize((250, 250))
     image = img_to_array(image)
@@ -19,6 +20,7 @@ def preprocess_image(data):
 
 
 def model_predict(image) -> str:
+    """The machine learning image model prediction function"""
     pred = MODEL.predict(image)
     pred = np.argmax(pred, axis=1)[0]
     labels = {0: 'fire', 1: 'no-fire'}

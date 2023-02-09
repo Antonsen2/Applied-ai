@@ -31,6 +31,7 @@ MODEL = load_model(MODEL_PATH)
 
 
 def preprocess_image(image):
+    """Prepare image to be used by model_predict function"""
     image = Image.open(BytesIO(image))
     transform = transforms.Compose([transforms.ToTensor()])
 
@@ -45,6 +46,23 @@ def get_relevant_scores(boxes: list, scores: list, labels: list) -> tuple:
 
 
 def model_predict(image):
+    """The Fire Detection model function.
+
+        Parameters
+        ----------
+        image: Must be a preprocess image from function preprocess_image
+
+        Returns
+        -------
+        tuple: contains three list of boxes, scores and labels.
+
+        boxes: are lists of 4 coordinates of x & y for the image rectangles.
+
+        scores: are the percentage of accuracy and have been used by the
+        THRESHOLD variable to filter out less accurate detections.
+
+        labels: are the prediction and they can be either smoke or fire.
+    """
     preds = MODEL(image)
     outputs = [{k: v.to(torch.device('cpu')) for k, v in target.items()}
                for target in preds]

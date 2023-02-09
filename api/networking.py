@@ -21,6 +21,21 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 async def image_to_classifier(client_id: bytes, image) -> str:
     reader, writer = await asyncio.open_connection(HOST_FIREML_CLASSIFIER,
                                                    PORT_FIREML_CLASSIFIER)
+    """The network socket communication to communicate with Fireclassifier.
+
+        Protocol
+        --------
+        The communication follows by:
+        1. Send metadata communication about file size and client id.
+        2. Sending file.
+            2.1 If receiving file transfer message with incomplete a second
+            attempt will begin.
+            2.2 Sending file.
+            2.3 If receiving from server file transfer was unsuccessful the
+                communication will be closed for the server and the raising
+                error HTTP status code 500 with unsuccessful file transfer.
+        3. Receiving with client id and the fireclassifier image prediction.
+    """
     # image header data
     checksum = f"{len(image)}".encode()
     header = AES.encrypt(checksum + b" " + client_id) + b"\n"
@@ -73,6 +88,21 @@ async def image_to_classifier(client_id: bytes, image) -> str:
 async def image_to_detection(client_id: bytes, image):
     reader, writer = await asyncio.open_connection(HOST_FIREML_DETECTION,
                                                    PORT_FIREML_DETECTION)
+    """The network socket communication handler between client and server.
+
+        Protocol
+        --------
+        The communication follows by:
+        1. Metadata communication about file size and client id.
+        2. Sending file.
+            2.1 If receiving file transfer message with incomplete a second
+            attempt will begin.
+            2.2 Sending file.
+            2.3 If receiving from server file transfer was unsuccessful the
+                communction will be closed for the server and the raising
+                error HTTP status code 500 with unsuccessful file transfer.
+        3. Receiving with client id and detection models arrays prediction.
+    """
     # image header data
     checksum = f"{len(image)}".encode("utf-8")
     header = AES.encrypt(checksum + b" " + client_id)

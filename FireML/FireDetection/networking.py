@@ -15,6 +15,7 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 
 
 async def run_server():
+    """The asyncio socket server"""
     server = await asyncio.start_server(handler, HOST_SERVER, PORT_SERVER)
     LOGGER.info("Server running on %s:%d", HOST_SERVER, PORT_SERVER)
 
@@ -26,6 +27,21 @@ async def run_server():
 
 async def handler(reader: asyncio.StreamReader,
                   writer: asyncio.StreamWriter) -> None:
+    """The network socket communication handler between client and server.
+
+        Protocol
+        --------
+        The communication follows by:
+        1. Metadata communication about file size and client id.
+        2. Receiving file.
+            2.1 If file transfer was incomplete a second attempt will start,
+                by first informing the client of incomplete file transfer.
+            2.2 Receiving file.
+            2.3 If file transfer was unsuccessful again communication will
+                begin closing and inform the client of unsuccessful file
+                transfer. No more further steps, communication closed.
+        3. Respond with client id and detection models arrays prediction.
+    """
     header = await reader.readline()
     checksum, client_id = AES.decrypt(header.strip()).split()
     checksum = int(checksum)
