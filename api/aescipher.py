@@ -35,17 +35,13 @@ class AESCipher:
 
     def encrypt(self, encode_data: bytes):
         encode_base64 = b64encode(encode_data).decode("utf-8")
-        cipher_data = self.client.secrets.transit.encrypt_data(
-                name=self.encrypt_key,
-                plaintext=encode_base64
-        )
+        cipher_data = self.client.secrets.transit.encrypt_data(name=self.encrypt_key,
+                                                               plaintext=encode_base64)
         data = cipher_data["data"]["ciphertext"].encode()
         return data
 
     def decrypt(self, encrypted_data: bytes):
         encrypted_data = encrypted_data.decode('utf-8')
-        decrypt_data_response = self.client.secrets.transit.decrypt_data(
-                name=self.decrypt_key,
-                ciphertext=encrypted_data
-        )
+        decrypt_data_response = self.client.secrets.transit.decrypt_data(name=self.decrypt_key,
+                                                                         ciphertext=encrypted_data)
         return b64decode(decrypt_data_response["data"]["plaintext"])
