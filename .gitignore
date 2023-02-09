@@ -9,3 +9,6 @@ venv*
 data
 dataset
 target
+
+# Models to big for GitHub
+models
