@@ -30,7 +30,7 @@ jobs:
       - name: Lint with Pep8
         run: |
           # stop the build if there are Python syntax errors or undefined names. The is 127 chars wide
-          pycodestyle api/. --count --show-source --max-line-length=127 --statistics
+          pycodestyle api/. --config=.github/workflows/pycodestyle.rc
 
   Pylint:
     runs-on: ubuntu-latest
