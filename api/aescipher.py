@@ -1,36 +1,47 @@
-import hashlib
+import os
 from base64 import b64encode, b64decode
-from Crypto import Random
-from Crypto.Cipher import AES
+import hvac
 
 
 class AESCipher:
-    def __init__(self, key):
-        self.block_size = AES.block_size
-        self.key = hashlib.sha256(key.encode()).digest()
+    """Vault transit encryption as a service class
 
-    def encrypt(self, encode_data):
-        encode_data = self.__pad(encode_data)
-        iv = Random.new().read(self.block_size)
-        cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        encrypted_text = cipher.encrypt(encode_data)
-        return b64encode(iv + encrypted_text)
+        This utilizes the Vault transit encryption service
+        to encrypt and decrypt data. This must come in bytes as a datatype.
 
-    def decrypt(self, encrypted_data):
-        encrypted_data = b64decode(encrypted_data)
-        iv = encrypted_data[:self.block_size]
-        cipher = AES.new(self.key, AES.MODE_CBC, iv)
-        byte_data = cipher.decrypt(encrypted_data[self.block_size:])
-        return self.__unpad(byte_data)
+        Requirements
+        ------------
+        VAULT_ADDR: environmental variable
+        VAULT_TOKEN: environmental variable
 
-    def __pad(self, data):
-        number_of_bytes_to_pad = self.block_size - len(data) % self.block_size
-        ascii_byte = chr(number_of_bytes_to_pad).encode("utf-8")
-        padding_bytes = number_of_bytes_to_pad * ascii_byte
-        padded_data = data + padding_bytes
-        return padded_data
+        Vault must be preconfigured with a key in transit called "fire".
+        To change this alter self.encrypt_key variable.
 
-    @staticmethod
-    def __unpad(plain_text):
-        last_character = plain_text[len(plain_text) - 1:]
-        return plain_text[:-ord(last_character)]
+        Methods
+        -------
+        encrypt:
+            Encrypt the data with key fire from vault transit.
+        decrypt:
+            Decrypts the data with key fire from vault transit.
+    """
+    def __init__(self):
+        hvac_client = dict(url=os.environ["VAULT_ADDR"],
+                           token=os.environ["VAULT_TOKEN"])
+        self.client = hvac.Client(**hvac_client)
+        assert self.client.is_authenticated()
+
+        self.encrypt_key = "fire"
+        self.decrypt_key = self.encrypt_key
+
+    def encrypt(self, encode_data: bytes):
+        encode_base64 = b64encode(encode_data).decode("utf-8")
+        cipher_data = self.client.secrets.transit.encrypt_data(name=self.encrypt_key,
+                                                               plaintext=encode_base64)
+        data = cipher_data["data"]["ciphertext"].encode()
+        return data
+
+    def decrypt(self, encrypted_data: bytes):
+        encrypted_data = encrypted_data.decode('utf-8')
+        decrypt_data_response = self.client.secrets.transit.decrypt_data(name=self.decrypt_key,
+                                                                         ciphertext=encrypted_data)
+        return b64decode(decrypt_data_response["data"]["plaintext"])

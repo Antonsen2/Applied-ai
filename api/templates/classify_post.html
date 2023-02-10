@@ -1,52 +1,19 @@
-<style>
-body {
-    background-color: black;
-    color: #f6660d;
-}
+{% extends "base.html" %}
+{% block title %}Classify{% endblock %}
+{% block content %}
+    <h2 class="medium_font_size">Fire result</h2>
+    {% if coords %}
+        <p>Coordinates {{coords}}</p>
+    {% endif %}
 
-.container {
-    width: 100%;
-}
-
-table {
-    margin: auto;
-    width: 75%; /* Adjust as needed */
-    border-collapse: collapse;
-    margin-top: 50px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-th {
-    background-color: #f6660d;
-    color: white;
-}
-
-th.image {
-    width: 30%;
-}
-</style>
-<body>
-    <div class="container">
-        <table>
-            <tr>
-                <th class="image">Image</th>
-                <th class="label">Label</th>
-                <th class="coordinates">Coordinates</th>
-            </tr>
-            {% for result in results %}
-            <tr>
-                <td>
-                    <img src="{{ result.image_path }}" alt="{{ result.label }}">
-                </td>
-                <td>{{ result.label }}</td>
-                <td>{{ result.coords }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
-</body>
+    {% for result in results %}
+        <div class="results">
+            <h3 class="small_font_size">{{ result.prediction }}</h3>
+            {% if result.obj_result %}
+                {{ result.obj_result | safe }}
+            {% else %}
+                <img src="data:{{ result.filetype }};base64,{{ result.image | safe }}" style="margin-left: 50px;">
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}

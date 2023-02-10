@@ -1,14 +1,14 @@
 import asyncio
 import socket
+import pickle
 import logging
 from aescipher import AESCipher
-from prediction import model_predict, preprocess_image
+from prediction import preprocess_image, model_predict
 
 
 AES = AESCipher()
-
 HOST_SERVER = socket.gethostname()
-PORT_SERVER = 5000
+PORT_SERVER = 5001
 
 LOGGER_NAME = "networking"
 LOGGER = logging.getLogger(LOGGER_NAME)
@@ -16,7 +16,6 @@ LOGGER = logging.getLogger(LOGGER_NAME)
 
 async def run_server():
     """The asyncio socket server"""
-
     server = await asyncio.start_server(handler, HOST_SERVER, PORT_SERVER)
     LOGGER.info("Server running on %s:%d", HOST_SERVER, PORT_SERVER)
 
@@ -41,7 +40,7 @@ async def handler(reader: asyncio.StreamReader,
             2.3 If file transfer was unsuccessful again communication will
                 begin closing and inform the client of unsuccessful file
                 transfer. No more further steps, communication closed.
-        3. Respond with client id and classifier models prediction.
+        3. Respond with client id and detection models arrays prediction.
     """
     header = await reader.readline()
     checksum, client_id = AES.decrypt(header.strip()).split()
@@ -50,8 +49,8 @@ async def handler(reader: asyncio.StreamReader,
 
     LOGGER.info("Receiving client %s image size %d", client_id, checksum)
 
-    # recv image
     file = await recv_file(reader)
+
     LOGGER.debug("client %s image received, expected: %d; got: %d", client_id,
                  checksum, len(file))
 
@@ -90,13 +89,22 @@ async def handler(reader: asyncio.StreamReader,
     # use model
     LOGGER.debug("client %s starting image prediction", client_id)
     fire_prediction = model_predict(image)
-    LOGGER.info("client %s finsihed image prediction %s", client_id,
-                fire_prediction)
+    LOGGER.info("client %s image object detection prediction finished",
+                client_id)
 
-    # send back prediction
-    response = await package_response(client_id, fire_prediction)
+    # SEND prediction header
+    response = await package_response(client_id, "success")
     writer.write(response)
     await writer.drain()
+
+    LOGGER.debug("client %s sent header response", client_id)
+
+    # SEND prediction
+    prediction_data = pickle.dumps(fire_prediction)
+    writer.write(AES.encrypt(prediction_data) + b"\n")
+    await writer.drain()
+
+    LOGGER.info("client %s object detection sent", client_id)
 
     writer.close()
     LOGGER.debug("Closed client %s socket communication", client_id)
@@ -104,10 +112,7 @@ async def handler(reader: asyncio.StreamReader,
 
 
 async def recv_file(reader: asyncio.StreamReader) -> bytes:
-    # recv data
     data = await reader.readline()
-
-    # decrypt image
     file = AES.decrypt(data)
     return file
 
