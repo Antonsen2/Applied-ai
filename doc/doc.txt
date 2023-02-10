@@ -1,3 +1,20 @@
-Directory for documentation
+This section contains how we we work as a team using scrum. We come into an agreement of how we want to work, and that we document everything. This could be a guildline 
+when budiling teams online for students and anyone who is intersted. 
 
-## EMPTY FILE FOR GITHUB STRUCTURE ##
+Team Norm
+
+- Working hour: 9 - 16 
+- Christmas and new years break : 22 Dec - 2 Jan. 
+- If  we are late, sick, or having something to do we should inform the team via  team discord or phone number.  
+- We will keep our communication mainly in Discord
+- Use #general to send non specific information
+- Use Voice General for group meetings
+- If it starts to be more specific information we should group them into categories. i.e we current have contact-info, and "working agreement", and knowledge sharing.
+- If there are any important information, it should be pinned in the channel.
+- The response time should be within a day. If it is urgent, it could be within an hour or faster. 
+
+Team Value
+
+- Transparency - let us know if you run into trouble 
+- High level of trust - believe that your team mate would work on the task assigned, let he/she manage their own time. 
+- Respect - have discussion with respects, agree on thing together. Reviewing on code and would not change the code of the original authors. While reviewing, suggestion should also be given.
