@@ -20,14 +20,14 @@ This folder contains notebooks and scripts used to optimize and fine-tune the ma
 <b>utilities:</b> 
 This folder contains helper functions and tools that are used by other parts of the research branch.
 
-### Getting Started
+### Usage - Getting Started
 To get started with the research branch, follow these steps:
 
 1. Clone the repository to your local machine.
 2. Install the required dependencies listed in requirements.txt.
 3. Open the notebooks in the optimization/notebooks folder and run the code to train and fine-tune the machine learning models.
 4. Use the code in the model folder to save the trained models and use them in your application.
-5. Use the code in the analysis folder to evaluate the performance of the models and gain insights into how to improve them.
+5. Use the code in the analysis folder to evaluate the performance of the data/models and gain insights into how to improve them.
 
 ## Contributing
 We welcome contributions to the research branch of the project. We are open source, if you'd like to contribute, please follow these steps:
