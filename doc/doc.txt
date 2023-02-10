@@ -9,7 +9,8 @@ Team Norm
 - We will keep our communication mainly in Discord
 - Use #general to send non specific information
 - Use Voice General for group meetings
-- If it starts to be more specific information we should group them into categories. i.e we current have contact-info, and "working agreement", and knowledge sharing.
+- If it starts to be more specific information we should group them into categories. i.e we current have contact-info, and "working agreement",
+ and knowledge sharing.
 - If there are any important information, it should be pinned in the channel.
 - The response time should be within a day. If it is urgent, it could be within an hour or faster. 
 
@@ -17,4 +18,5 @@ Team Value
 
 - Transparency - let us know if you run into trouble 
 - High level of trust - believe that your team mate would work on the task assigned, let he/she manage their own time. 
-- Respect - have discussion with respects, agree on thing together. Reviewing on code and would not change the code of the original authors. While reviewing, suggestion should also be given.
+- Respect - have discussion with respects, agree on thing together. Reviewing on code and would not change the code of the original authors. 
+While reviewing, suggestion should also be given.
