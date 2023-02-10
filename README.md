@@ -30,7 +30,7 @@ To get started with the research branch, follow these steps:
 5. Use the code in the analysis folder to evaluate the performance of the models and gain insights into how to improve them.
 
 ## Contributing
-We welcome contributions to the research branch of the project. If you'd like to contribute, please follow these steps:
+We welcome contributions to the research branch of the project. We are open source, if you'd like to contribute, please follow these steps:
 
 1. Fork the repository.
 2. Make your changes and commit them to your fork.
