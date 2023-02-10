@@ -18,19 +18,18 @@ The object detection model is a <b>Faster R-CNN</b>, which stands for Region-bas
 
 ## Usage - Get started
 1. Fork the project
-2. Pip install requrements.txt 
-3. To get full dataset please contact any contributor or try your own dataset.
-4. The classification model is in the repository, but for object detection, you will to up load by yourself as it is too big for github. You can also contact any contributor for object detection model or train yourself in the research branch.
-5. Add .env file which should contain 
+2. To get full dataset please contact any contributor or try your own dataset.
+3. The classification model is in the repository, but for object detection, you will to upload by yourself as it is too big for github. You can also contact any contributor for object detection model or train yourself in the research branch.
+4. Add .env file which should contain 
     ```
     TOKEN=yourownpreferences
     LOG_LEVEL=INFO
     ```
-6. Run docker containers in root directory.
+5. Run docker containers in root directory.
    ```
    docker compose up --build
     ```
-8. Go to  http://localhost:8000/classify to test the model
+6. Go to  http://localhost:8000/classify to test the model
 
 ### Note
 
