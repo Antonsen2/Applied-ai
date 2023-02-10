@@ -14,7 +14,7 @@ Right now we add just documenting of how we work as team, product development le
 <b>model:</b> 
 This folder contains the code for the different machine learning models.
 
-<b></b>optimization/notebooks: 
+<b>optimization/notebooks</b>: 
 This folder contains notebooks and scripts used to optimize and fine-tune the machine learning models.
 
 <b>utilities:</b> 
