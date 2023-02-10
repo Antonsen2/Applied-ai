@@ -5,7 +5,7 @@ This branch contains all of the code and resources related to training machine l
 The research branch consists of the following folders:
 
 <b>analysis:</b> 
-This folder contains code and resources for analyzing the performance of the machine learning models.
+This folder contains code and resources for analyzing data and the performance of the machine learning models (right now we only have data).
 
 <b>doc:</b>
 This folder should contain documentation and notes related to the machine learning models and their training process.
