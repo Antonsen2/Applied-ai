@@ -1,3 +1,0 @@
-Directory for analysis notebooks etc.
-
-## EMPTY FILE FOR GITHUB STRUCTURE ##

@@ -10,7 +10,5 @@ data
 dataset
 target
 
-# Image Files (plots etc.)
-*.jpeg
-*.jpg
-*.png
+# Models to big for GitHub
+models
