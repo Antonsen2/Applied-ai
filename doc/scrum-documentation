@@ -1,7 +1,64 @@
-Product Backlog - Versioning & Roadmap
+Scrum Events
 
-Epic/user stories are saved in Miro.
+- Daily standup: 11:00-11.15
 
-View only Click this link: 
+- Technical Discussion: After daily if needed
 
-To be able to edit: click this link
+- Sprint planning: Monday from kl 11-12 ( 1-2h)
+
+- Sprint review: Monday after sprint planning (30min - 1h)
+
+- Sprint retrospective: Monday after review (1h)
+
+- Refinement: Wednesday after lectures, otherwise after daily. (1h)
+
+Roles in Scrum Event:
+
+- Alicia take all the notes and documentation
+
+- Markus and Andreas would take roles as a project leader (scrum master)
+
+- For daily scrum, or any other scrum events, we will allow everyone to steps in and share the screen if they feel like it. 
+
+Scrum Documentation
+
+- Jira task, user story:
+
+    What: 
+
+    Why: 
+
+    Description: 
+
+    Dependency: 
+
+    Time (in hours): Or story Points? This we can ask teacher what he prefers
+
+    Definition of done:
+   
+
+- ONE PLACE: Trello Integrated
+
+    Time line, road map: TeamGantt 
+
+    Story Board: StoriesOnBoard
+
+    Retrospective: Retrospectives board
+
+    Daily Scrum: Daily Updates
+
+    Sprint Planning: We do it on our “Skogbrand” board
+
+                             Can also use the “swim lane” for visualization
+
+                             Use the burn down chart to do “sprint start”
+
+    Sprint Review: We do it on our “Skogbrand” board. 
+
+                          Can also look burn down chart.
+
+                          Use the burn down chart to “end” the sprint
+
+    Backlog Refinement: Use the “Story Board” to get an overview of the projects
+
+                                     Use the backlog to store all the refined stories.
