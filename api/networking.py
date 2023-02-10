@@ -1,10 +1,10 @@
 import asyncio
-import pickle
 import logging
-from fastapi import HTTPException
-from aescipher import AESCipher
-from plotprediction import plot_prediction
+import pickle
 
+from aescipher import AESCipher
+from fastapi import HTTPException
+from plotprediction import plot_prediction
 
 HOST_FIREML_CLASSIFIER = "fireclassifier"
 PORT_FIREML_CLASSIFIER = 5000

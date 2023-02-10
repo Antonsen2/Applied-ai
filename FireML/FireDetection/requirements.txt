@@ -6,6 +6,8 @@ fonttools==4.38.0
 hvac==1.0.2
 idna==3.4
 kiwisolver==1.4.4
+matplotlib==3.6.3
+mpld3==0.5.9
 numpy==1.24.1
 nvidia-cublas-cu11==11.10.3.66
 nvidia-cuda-nvrtc-cu11==11.7.99

@@ -1,10 +1,14 @@
+<link rel="stylesheet" type="text/css" href="style.css">
+
 {% extends "base.html" %}
 {% block title %}Classify{% endblock %}
 {% block content %}
-    <h2 class="medium_font_size">Image predictions</h2>
+
+<div style="display: flex; height: 50vh; align-items: center; justify-content: center;">
+  <div id='form-container'>
+    <h2 class="medium_font_size" style="text-align: center; margin-bottom: 50px;">Image predictions</h2>
     <p>Choose the images you want the model to predict on</p>
     <p class="note">CTR + click to select several images</p>
-    <div id='form-container' class="label_right_10">
         <form id="upload-form" method="POST" enctype="multipart/form-data">
             <input id="files" type="file" name="images" multiple="multiple" accept="image/jpeg, image/png, image/jpg">
             <label for="coords">Coordinates
@@ -14,8 +18,9 @@
                 <input type="checkbox" id="dodetect" name="dodetect" value="True">
             </label>
             <input type="submit" class="green_badass_button" value="Upload">
-            <output id="result">
+            <output id="result"></output>
         </form>
-    </div>
-    <script src="{{ url_for('static', path='/js/images.js') }}" ></script>
+  </div>
+</div>
+<script src="{{ url_for('static', path='/js/images.js') }}" ></script>
 {% endblock %}
